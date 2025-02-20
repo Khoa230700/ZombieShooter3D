@@ -10,6 +10,9 @@ public class Zombie : MonoBehaviour
     private void Update()
     {
         agent.SetDestination(Player.position);
+
+        
+
     }
 
 }
