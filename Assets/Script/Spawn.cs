@@ -1,32 +1,78 @@
 ﻿using System.Collections;
 using UnityEngine;
+using TMPro;
 
 public class Spawn : MonoBehaviour
 {
-    [SerializeField] private GameObject enemyPrefab;
-    [SerializeField] private Transform[] spawnPoints = new Transform[3];
-    private int Enemy = 0;
+    [SerializeField] private GameObject enemyPrefab;    // Prefab của zombie
+    [SerializeField] private Transform[] spawnPoints;  // Mảng điểm spawn
+    [SerializeField] private int waveNumber = 1;       // Số wave hiện tại
+    [SerializeField] private int   zombiesPerWave = 5; // Số zombie mỗi wave cơ bản
+    [SerializeField] private float spawnDelay = 2f;    // Thời gian delay giữa các lần spawn
+    [SerializeField] private float waveDelay = 5f;     // Thời gian delay giữa các wave
+    [SerializeField] private int maxWave = 3;
+    [SerializeField] public int zombiesRemaining;
+    [SerializeField] private TextMeshProUGUI textMeshProWave;
+    [SerializeField] private TextMeshProUGUI textMeshProZom;
     private void Start()
     {
-        
-        // Khởi chạy coroutine để spawn quái
-        StartCoroutine(SpawnEnemies());
-    }
-    IEnumerator SpawnEnemies()
-    {
        
-        while (Enemy <= 60)
+        // Khởi chạy coroutine để spawn quái
+        StartCoroutine(StartNextWave());
+    }
+    private void Update()
+    {
+        textMeshProWave.text = waveNumber.ToString();
+        textMeshProZom.text = zombiesRemaining.ToString();
+    }
+    IEnumerator StartNextWave()
+    {
+        yield return new WaitForSeconds(waveDelay);
+        // Kiểm tra nếu wave hiện tại không vượt quá maxWave
+        if (waveNumber <= maxWave)
         {
-            for (int i = 0; i < spawnPoints.Length; i++)
-            {
-                Instantiate(enemyPrefab, spawnPoints[i].position , spawnPoints[i].rotation);
-                Enemy++;
-                Debug.Log(Enemy);
-                yield return new WaitForSeconds(2);
-            }
-            yield return new WaitForSeconds(5);
+            StartCoroutine(SpawnWave());
+        }
+        else
+        {
+            // Tất cả các wave đã hoàn thành, bạn có thể thêm hành động kết thúc game ở đây.
+            Debug.Log("Tất cả các wave đã được hoàn thành!");
         }
     }
+    public void ZombieKilled()
+    {
+        if (zombiesRemaining <= 0)
+        {
+            waveNumber++;
+            StartCoroutine(StartNextWave());
+        }
+    }
+    IEnumerator SpawnWave()
+    {
+        // Tính tổng số zombie cần spawn cho wave hiện tại.
+        zombiesRemaining = waveNumber * zombiesPerWave;
+        // Tính số vòng lặp đầy đủ (mỗi vòng spawn enemy tại tất cả các spawn point)
+        int rounds = zombiesRemaining / spawnPoints.Length;
+        // Tính số enemy còn lại nếu tổng không chia hết cho số spawn point
+        int remainder = zombiesRemaining % spawnPoints.Length;
 
+        // Vòng lặp thứ nhất: spawn theo từng vòng đầy đủ qua tất cả các spawn point.
+        for (int i = 0; i < rounds; i++)
+        {
+            for (int j = 0; j < spawnPoints.Length; j++)
+            {
+                Instantiate(enemyPrefab, spawnPoints[j].position, spawnPoints[j].rotation);
+                yield return new WaitForSeconds(spawnDelay);
+            }
+        }
+
+        // Vòng lặp thứ hai: spawn các enemy còn lại (nếu có).
+        for (int j = 0; j < remainder; j++)
+        {
+            Instantiate(enemyPrefab, spawnPoints[j].position, spawnPoints[j].rotation);
+            yield return new WaitForSeconds(spawnDelay);
+        }
+    }
+   
 }
 
