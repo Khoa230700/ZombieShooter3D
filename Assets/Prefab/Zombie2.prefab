@@ -2029,6 +2029,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyHealth: 10
   spawn: {fileID: 0}
+  animator: {fileID: 4435595498275925116}
 --- !u!1 &8787721349777881567
 GameObject:
   m_ObjectHideFlags: 0
