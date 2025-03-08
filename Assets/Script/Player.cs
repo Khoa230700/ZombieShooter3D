@@ -8,7 +8,7 @@ public class Player : MonoBehaviour
     [SerializeField] private Animator playerAnimator;
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private Spawn spawn;
-
+   
     
     // Update is called once per frame
     void Update()
@@ -28,6 +28,8 @@ public class Player : MonoBehaviour
             Debug.Log("trung");
             spawn.zombiesRemaining--;
             spawn.ZombieKilled();
+            //health.TakeDamge(90);
         }
     }
+    
 }

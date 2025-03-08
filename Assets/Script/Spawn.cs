@@ -11,9 +11,12 @@ public class Spawn : MonoBehaviour
     [SerializeField] private float spawnDelay = 2f;    // Thời gian delay giữa các lần spawn
     [SerializeField] private float waveDelay = 5f;     // Thời gian delay giữa các wave
     [SerializeField] private int maxWave = 3;
-    [SerializeField] public int zombiesRemaining;
+    public int zombiesRemaining;
     [SerializeField] private TextMeshProUGUI textMeshProWave;
     [SerializeField] private TextMeshProUGUI textMeshProZom;
+    [SerializeField] private TextMeshProUGUI textMeshCooldown; // Tham chiếu đến UI Text để hiển thị thời gian
+    [SerializeField] private GameObject panelcooldownl;
+
     private void Start()
     {
        
@@ -24,24 +27,36 @@ public class Spawn : MonoBehaviour
     {
         textMeshProWave.text = waveNumber.ToString();
         textMeshProZom.text = zombiesRemaining.ToString();
+   
+
     }
+    
     IEnumerator StartNextWave()
     {
-        yield return new WaitForSeconds(waveDelay);
-        // Kiểm tra nếu wave hiện tại không vượt quá maxWave
+        float currentDelay = waveDelay;
+        // Vòng lặp giảm thời gian từ waveDelay về 0
+        while (currentDelay > 0)
+        {
+            panelcooldownl.SetActive(true);
+            textMeshCooldown.text = currentDelay.ToString("F0");
+            currentDelay -= Time.deltaTime; // Giảm dần theo thời gian thực
+            yield return null; // Chờ đến frame tiếp theo
+        }
+        panelcooldownl.SetActive(false);
+        textMeshCooldown.text = "0"; // Đảm bảo hiển thị 0 khi hết thời gian
+        // Sau khi đếm ngược xong, kiểm tra và bắt đầu wave tiếp theo
         if (waveNumber <= maxWave)
         {
             StartCoroutine(SpawnWave());
         }
         else
         {
-            // Tất cả các wave đã hoàn thành, bạn có thể thêm hành động kết thúc game ở đây.
             Debug.Log("Tất cả các wave đã được hoàn thành!");
         }
     }
     public void ZombieKilled()
     {
-        if (zombiesRemaining <= 0)
+        if (zombiesRemaining <= 0 )
         {
             waveNumber++;
             StartCoroutine(StartNextWave());

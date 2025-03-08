@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using JetBrains.Annotations;
+using System.Collections;
 using System.Linq.Expressions;
 using TreeEditor;
 using UnityEngine;
@@ -12,6 +13,7 @@ public class Zombie : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private GameObject Player;
     [SerializeField] private NavMeshAgent agent;
+  
      
     private int _speedHash;
     private int _attackHash;
@@ -47,8 +49,8 @@ public class Zombie : MonoBehaviour
             animator.SetBool(_speedHash,true);
         }
 
-       
     }
+   
        
    
 
