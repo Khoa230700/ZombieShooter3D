@@ -10,10 +10,12 @@ public class Weapon : MonoBehaviour
     public Animator animator;
     public ParticleSystem flash;
     public Transform raycasthit;
-    public GameObject bullet;
+    public ParticleSystem bullethit;
+    public GameObject hitvfx;
     public float bulletspeed;
     public Transform bulletpoint;
     public int damageout;
+
     
     // Update is called once per frame
     void Update()
@@ -27,6 +29,7 @@ public class Weapon : MonoBehaviour
             if (Physics.Raycast(raycasthit.transform.position, raycasthit.transform.forward
              , out hit, Mathf.Infinity))
             {
+                Instantiate(bullethit,hit.point,quaternion.identity);
                 Heath health = hit.collider.GetComponent<Heath>();
                 if (health)
                 {
