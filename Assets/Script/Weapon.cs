@@ -11,9 +11,6 @@ public class Weapon : MonoBehaviour
     public ParticleSystem flash;
     public Transform raycasthit;
     public ParticleSystem bullethit;
-    public GameObject hitvfx;
-    public float bulletspeed;
-    public Transform bulletpoint;
     public int damageout;
 
     

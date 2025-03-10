@@ -13,8 +13,12 @@ public class Zombie : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private GameObject Player;
     [SerializeField] private NavMeshAgent agent;
-  
-     
+    [SerializeField] public int Damege = 40;
+    [SerializeField] private CapsuleCollider capsuleCollider;
+    [SerializeField] private PlayerHealth playerHealth;
+
+    public float attackCooldown = 3f;  // Thời gian chờ giữa các đợt tấn công
+    private float nextAttackTime = 0f; // Thời điểm cho phép tấn công tiếp theo
     private int _speedHash;
     private int _attackHash;
     private void Awake()
@@ -23,6 +27,10 @@ public class Zombie : MonoBehaviour
             {
                 Player = GameObject.FindGameObjectWithTag("Player");
             }
+            if (playerHealth == null)
+        {
+            playerHealth = FindObjectOfType<PlayerHealth>();
+        }
         
     }
     private void Start()
@@ -33,26 +41,57 @@ public class Zombie : MonoBehaviour
     }
     private void Update()
     {
-      
         agent.SetDestination(Player.transform.position);
         // tính khoảng cách giữa quái và vị trí ban đầu nhân vật
         var distance = Vector3.Distance(BOT.position, Player.transform.position);
-        
-        if (distance <=2)
+
+        if (distance <= 1.4f)
         {
             animator.SetTrigger("Attack");
+            //if (Time.time >= nextAttackTime)
+            //{
+            //    // Kích hoạt animation tấn công
+            //    animator.SetTrigger("Attack");
+
+            //    // Cập nhật thời điểm cho lần tấn công kế tiếp
+            //    nextAttackTime = Time.time + attackCooldown;
+            //}
+            //else
+            //{
+            //    // Trong lúc chờ, chuyển sang animation idle
+            //    animator.Play("Z_Idle", 0, 0);
+            //}
         }
         else
         {
             //đuổi theo nhân vật
             agent.SetDestination(Player.transform.position);
-            animator.SetBool(_speedHash,true);
+            animator.SetBool(_speedHash, true);
         }
 
+        
     }
-    
-   
-       
-   
+    public void Animationtrigger()
+    {
+        capsuleCollider.isTrigger = true;
+    }
+    public void animationEnd()
+    {
+        capsuleCollider.isTrigger = false;
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            Debug.Log("hit");
+            if (playerHealth != null)
+            {
+                playerHealth.TakeDamage(Damege);
+            }
+        }
+    }
+
+
+
 
 }

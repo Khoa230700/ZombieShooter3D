@@ -3,6 +3,7 @@ using UnityEngine.UI;
 
 public class RaycastShooter : MonoBehaviour
 {
+
     public Transform shootPoint; // Điểm bắn raycast, có thể kéo thả trong Inspector
     public Camera mainCamera; // Camera để chuyển đổi vị trí chuột thành vị trí thế giới
     public RawImage crosshair; // Hình crosshair
@@ -11,6 +12,8 @@ public class RaycastShooter : MonoBehaviour
     public Color hitZombieColor = Color.red;
     public Color hitZombieHeadColor = Color.green;
     private Vector3 savedHitPosition; // Biến lưu tọa độ khi bắn trúng
+    public ParticleSystem flash;
+
 
     void Start()
     {
@@ -22,8 +25,9 @@ public class RaycastShooter : MonoBehaviour
 
     void Update()
     {
+
         ShootRaycast();
-        CheckMouseClick();
+
     }
 
     void ShootRaycast()
@@ -70,10 +74,11 @@ public class RaycastShooter : MonoBehaviour
         }
     }
 
-    void CheckMouseClick()
+    public void CheckMouseClick(GunSO gunso)
     {
-        if (Input.GetMouseButtonDown(0)) // Nếu người chơi bấm chuột trái
+        //if (Input.GetMouseButtonDown(0)) // Nếu người chơi bấm chuột trái
         {
+
             Vector3 mousePosition = Input.mousePosition;
             Ray cameraRay = mainCamera.ScreenPointToRay(mousePosition);
             RaycastHit cameraHit;
@@ -90,7 +95,9 @@ public class RaycastShooter : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit, raycastDistance))
             {
+                flash.Play();
                 savedHitPosition = hit.point;
+                Instantiate(gunso.bullethit, hit.point, Quaternion.identity);
                 Debug.Log("Hit Object: " + hit.collider.gameObject.name + " at Position: " + savedHitPosition);
             }
             else
@@ -101,3 +108,4 @@ public class RaycastShooter : MonoBehaviour
         }
     }
 }
+
