@@ -3,14 +3,17 @@ using UnityEngine.UI;
 
 public class RaycastShooter : MonoBehaviour
 {
-    public Transform shootPoint; // Điểm bắn raycast, có thể kéo thả trong Inspector
-    public Camera mainCamera; // Camera để chuyển đổi vị trí chuột thành vị trí thế giới
-    public RawImage crosshair; // Hình crosshair
-    public float raycastDistance = 100f; // Độ dài của Raycast có thể chỉnh trong Inspector
+    public Transform shootPoint;
+    public Camera mainCamera;
+    public RawImage crosshair;
+    public float raycastDistance = 100f;
     public Color defaultColor = Color.white;
     public Color hitZombieColor = Color.red;
     public Color hitZombieHeadColor = Color.green;
-    private Vector3 savedHitPosition; // Biến lưu tọa độ khi bắn trúng
+    public Vector3 savedHitPosition;
+    public GunRecoil gunRecoil;
+
+    public GunController gunController; // Tham chiếu đến GunController
 
     void Start()
     {
@@ -30,27 +33,22 @@ public class RaycastShooter : MonoBehaviour
     {
         if (shootPoint == null || mainCamera == null) return;
 
-        // Lấy vị trí con trỏ chuột trên màn hình
         Vector3 mousePosition = Input.mousePosition;
-
-        // Bắn một tia từ camera để lấy vị trí tương ứng trong thế giới
         Ray cameraRay = mainCamera.ScreenPointToRay(mousePosition);
         RaycastHit cameraHit;
 
-        Vector3 targetPoint = shootPoint.position + shootPoint.forward * raycastDistance; // Sử dụng raycastDistance từ Inspector
+        Vector3 targetPoint = shootPoint.position + shootPoint.forward * raycastDistance;
         if (Physics.Raycast(cameraRay, out cameraHit, raycastDistance))
         {
-            targetPoint = cameraHit.point; // Nếu ray từ camera chạm vào vật thể, lấy vị trí chạm đó
+            targetPoint = cameraHit.point;
         }
 
-        // Bắn một raycast từ shootPoint đến targetPoint
         Vector3 direction = (targetPoint - shootPoint.position).normalized;
         Ray ray = new Ray(shootPoint.position, direction);
         RaycastHit hit;
 
         if (Physics.Raycast(ray, out hit, raycastDistance))
         {
-            // Kiểm tra tag của đối tượng trúng raycast
             if (hit.collider.CompareTag("ZombieHead"))
             {
                 crosshair.color = hitZombieHeadColor;
@@ -72,32 +70,46 @@ public class RaycastShooter : MonoBehaviour
 
     void CheckMouseClick()
     {
-        if (Input.GetMouseButtonDown(0)) // Nếu người chơi bấm chuột trái
+        if (Input.GetMouseButtonDown(0))
         {
             Vector3 mousePosition = Input.mousePosition;
             Ray cameraRay = mainCamera.ScreenPointToRay(mousePosition);
             RaycastHit cameraHit;
 
-            Vector3 targetPoint = shootPoint.position + shootPoint.forward * raycastDistance;
+            Vector3 targetPoint;
+            float minDistance = 2f;
+
             if (Physics.Raycast(cameraRay, out cameraHit, raycastDistance))
             {
-                targetPoint = cameraHit.point;
-            }
+                float hitDistance = Vector3.Distance(cameraRay.origin, cameraHit.point);
 
-            Vector3 direction = (targetPoint - shootPoint.position).normalized;
-            Ray ray = new Ray(shootPoint.position, direction);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit, raycastDistance))
-            {
-                savedHitPosition = hit.point;
-                Debug.Log("Hit Object: " + hit.collider.gameObject.name + " at Position: " + savedHitPosition);
+                if (hitDistance < minDistance)
+                {
+                    targetPoint = cameraHit.point + cameraRay.direction * (minDistance - hitDistance);
+                }
+                else
+                {
+                    targetPoint = cameraHit.point;
+                }
             }
             else
             {
-                savedHitPosition = shootPoint.position + direction * raycastDistance;
-                Debug.Log("No object hit. Raycast endpoint: " + savedHitPosition);
+                targetPoint = cameraRay.origin + cameraRay.direction * raycastDistance;
+            }
+
+            savedHitPosition = targetPoint;
+            Debug.Log($"Shooting at: {savedHitPosition}");
+            if (gunController != null)
+            {
+                gunController.SetTargetPosition(savedHitPosition);
+                gunController.FireBullet();
+                
+            }
+            if (gunRecoil != null)
+            {
+                gunRecoil.ApplyRecoil();
             }
         }
     }
+
 }
