@@ -14,6 +14,7 @@ public class GunTypeController : MonoBehaviour
     void Start()
     {
         UpdateWeapon(0);
+        
     }
 
     void Update()
