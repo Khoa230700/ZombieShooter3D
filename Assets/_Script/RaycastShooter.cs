@@ -59,8 +59,6 @@ public class RaycastShooter : MonoBehaviour
         {
             targetPoint = cameraHit.point;
         }
-
-        // Nếu quá gần vật thể, tránh thay đổi vị trí đột ngột
         float minDistance = 2f;
         float hitDistance = Vector3.Distance(shootPoint.position, targetPoint);
 
@@ -76,28 +74,39 @@ public class RaycastShooter : MonoBehaviour
     void UpdateCrosshair(Vector3 targetPoint)
     {
         Ray ray = new Ray(shootPoint.position, (targetPoint - shootPoint.position).normalized);
-        RaycastHit hit;
+        RaycastHit[] hits = Physics.RaycastAll(ray, raycastDistance);
 
-        if (Physics.Raycast(ray, out hit, raycastDistance))
+        bool foundHead = false;
+        bool foundBody = false;
+
+        foreach (RaycastHit hit in hits)
         {
-            if (hit.collider.CompareTag("ZombieHead"))
+            Transform hitTransform = hit.collider.transform;
+
+            if (hitTransform.CompareTag("ZombieHead"))
             {
-                crosshair.color = hitZombieHeadColor;
+                foundHead = true;
             }
-            else if (hit.collider.CompareTag("Zombie") || hit.collider.CompareTag("ZombieBody"))
+            else if (hitTransform.CompareTag("Zombie") || hitTransform.CompareTag("ZombieBody"))
             {
-                crosshair.color = hitZombieColor;
+                foundBody = true;
             }
-            else
-            {
-                crosshair.color = defaultColor;
-            }
+        }
+        if (foundHead)
+        {
+            crosshair.color = hitZombieHeadColor;
+        }
+        else if (foundBody)
+        {
+            crosshair.color = hitZombieColor;
         }
         else
         {
             crosshair.color = defaultColor;
         }
     }
+
+
 
     public void HandleShooting()
     {
@@ -143,16 +152,75 @@ public class RaycastShooter : MonoBehaviour
         animator.Play("Shoot", 0, 0);
 
         Vector3 direction = (savedHitPosition - firePoint.position).normalized;
-        if (Physics.Raycast(firePoint.position, direction, out RaycastHit hit, raycastDistance))
-        {
-            Instantiate(bullethit, hit.point, quaternion.identity);
+        RaycastHit[] hits = Physics.RaycastAll(firePoint.position, direction, raycastDistance);
 
-            Heath health = hit.collider.GetComponent<Heath>();
-            if (health)
+        bool isHeadshot = false;
+        bool isBodyshot = false;
+        RaycastHit? closestHit = null;
+        float closestDistance = float.MaxValue;
+        Heath targetHealth = null;
+
+        foreach (RaycastHit hit in hits)
+        {
+            float distance = Vector3.Distance(firePoint.position, hit.point);
+
+            if (distance < closestDistance)
             {
-                Debug.Log($"Hit: {hit.collider.name}, Damage: {damageout}");
-                health.TakeDamage(damageout);
+                closestHit = hit;
+                closestDistance = distance;
+            }
+
+            Transform hitTransform = hit.collider.transform;
+
+            if (hitTransform.CompareTag("ZombieHead"))
+            {
+                isHeadshot = true;
+                targetHealth = hit.collider.GetComponent<Heath>();
+            }
+            else if (hitTransform.CompareTag("Zombie") || hitTransform.CompareTag("ZombieBody"))
+            {
+                isBodyshot = true;
+                if (targetHealth == null)
+                    targetHealth = hit.collider.GetComponent<Heath>();
+            }
+
+            if (hitTransform.parent != null)
+            {
+                Transform parent = hitTransform.parent;
+                if (parent.CompareTag("ZombieHead"))
+                {
+                    isHeadshot = true;
+                    targetHealth = parent.GetComponent<Heath>();
+                }
+                else if (parent.CompareTag("Zombie"))
+                {
+                    isBodyshot = true;
+                    if (targetHealth == null)
+                        targetHealth = parent.GetComponent<Heath>();
+                }
             }
         }
+
+        if (closestHit.HasValue && targetHealth != null)
+        {
+            RaycastHit hit = closestHit.Value;
+            Instantiate(bullethit, hit.point, quaternion.identity);
+
+            int damageToApply = damageout;
+            if (isHeadshot)
+            {
+                damageToApply *= 2;
+                Debug.Log("🔥 Headshot! Damage: " + damageToApply);
+            }
+            else if (isBodyshot)
+            {
+                Debug.Log("💥 Bodyshot! Damage: " + damageToApply);
+            }
+
+            targetHealth.TakeDamage(damageToApply);
+        }
     }
+
+
+
 }

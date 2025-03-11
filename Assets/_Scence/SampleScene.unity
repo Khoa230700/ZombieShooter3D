@@ -509,7 +509,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd77964b7b958db42934b4c0542dd8f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  firePoint: {fileID: 574104271}
+  firePoint: {fileID: 615924557}
   shootPoint: {fileID: 615924557}
   mainCamera: {fileID: 330585545}
   raycastDistance: 100
@@ -523,7 +523,7 @@ MonoBehaviour:
   animator: {fileID: 187063652}
   flash: {fileID: 2036308341}
   bullethit: {fileID: 6516377003414581769, guid: c4d34659bf3a0c14aa83feb755ae2111, type: 3}
-  damageout: 8
+  damageout: 4
   savedHitPosition: {x: 0, y: 0, z: 0}
 --- !u!1001 &218149809
 PrefabInstance:
@@ -4447,7 +4447,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd77964b7b958db42934b4c0542dd8f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  firePoint: {fileID: 1788072676}
+  firePoint: {fileID: 615924557}
   shootPoint: {fileID: 615924557}
   mainCamera: {fileID: 330585545}
   raycastDistance: 120
@@ -4461,7 +4461,7 @@ MonoBehaviour:
   animator: {fileID: 1779420158}
   flash: {fileID: 2036308341}
   bullethit: {fileID: 6516377003414581769, guid: c4d34659bf3a0c14aa83feb755ae2111, type: 3}
-  damageout: 12
+  damageout: 5
   savedHitPosition: {x: 0, y: 0, z: 0}
 --- !u!114 &1779420162
 MonoBehaviour:
