@@ -1,19 +1,35 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using Unity.Mathematics;
+using StarterAssets;
 
 public class RaycastShooter : MonoBehaviour
 {
+    [Header("Raycast Settings")]
+    public Transform firePoint;
     public Transform shootPoint;
     public Camera mainCamera;
-    public RawImage crosshair;
     public float raycastDistance = 100f;
+
+    [Header("Crosshair Settings")]
+    public RawImage crosshair;
     public Color defaultColor = Color.white;
     public Color hitZombieColor = Color.red;
     public Color hitZombieHeadColor = Color.green;
-    public Vector3 savedHitPosition;
-    public GunRecoil gunRecoil;
 
-    public GunController gunController; // Tham chiếu đến GunController
+    [Header("Weapon Settings")]
+    public StarterAssetsInputs inputs;
+    public AudioClip aduclip;
+    public AudioSource adusource;
+    public Animator animator;
+    public ParticleSystem flash;
+    public ParticleSystem bullethit;
+    public int damageout;
+
+    public Vector3 savedHitPosition;
+    private bool isShooting = false;
+    private int frameCounter = 0;
+    private Vector3 lastMousePosition;
 
     void Start()
     {
@@ -25,11 +41,11 @@ public class RaycastShooter : MonoBehaviour
 
     void Update()
     {
-        ShootRaycast();
-        CheckMouseClick();
+        UpdateTargetPosition();
+        HandleShooting();
     }
 
-    void ShootRaycast()
+    void UpdateTargetPosition()
     {
         if (shootPoint == null || mainCamera == null) return;
 
@@ -37,30 +53,52 @@ public class RaycastShooter : MonoBehaviour
         Ray cameraRay = mainCamera.ScreenPointToRay(mousePosition);
         RaycastHit cameraHit;
 
-        Vector3 targetPoint = shootPoint.position + shootPoint.forward * raycastDistance;
+        Vector3 targetPoint = cameraRay.origin + cameraRay.direction * raycastDistance;
+
         if (Physics.Raycast(cameraRay, out cameraHit, raycastDistance))
         {
             targetPoint = cameraHit.point;
         }
+        float minDistance = 2f;
+        float hitDistance = Vector3.Distance(shootPoint.position, targetPoint);
 
-        Vector3 direction = (targetPoint - shootPoint.position).normalized;
-        Ray ray = new Ray(shootPoint.position, direction);
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit, raycastDistance))
+        if (hitDistance < minDistance)
         {
-            if (hit.collider.CompareTag("ZombieHead"))
+            targetPoint = shootPoint.position + cameraRay.direction * minDistance;
+        }
+
+        savedHitPosition = targetPoint;
+        UpdateCrosshair(targetPoint);
+    }
+
+    void UpdateCrosshair(Vector3 targetPoint)
+    {
+        Ray ray = new Ray(shootPoint.position, (targetPoint - shootPoint.position).normalized);
+        RaycastHit[] hits = Physics.RaycastAll(ray, raycastDistance);
+
+        bool foundHead = false;
+        bool foundBody = false;
+
+        foreach (RaycastHit hit in hits)
+        {
+            Transform hitTransform = hit.collider.transform;
+
+            if (hitTransform.CompareTag("ZombieHead"))
             {
-                crosshair.color = hitZombieHeadColor;
+                foundHead = true;
             }
-            else if (hit.collider.CompareTag("Zombie") || hit.collider.CompareTag("ZombieBody"))
+            else if (hitTransform.CompareTag("Zombie") || hitTransform.CompareTag("ZombieBody"))
             {
-                crosshair.color = hitZombieColor;
+                foundBody = true;
             }
-            else
-            {
-                crosshair.color = defaultColor;
-            }
+        }
+        if (foundHead)
+        {
+            crosshair.color = hitZombieHeadColor;
+        }
+        else if (foundBody)
+        {
+            crosshair.color = hitZombieColor;
         }
         else
         {
@@ -68,48 +106,121 @@ public class RaycastShooter : MonoBehaviour
         }
     }
 
-    void CheckMouseClick()
+
+
+    public void HandleShooting()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Vector3 mousePosition = Input.mousePosition;
-            Ray cameraRay = mainCamera.ScreenPointToRay(mousePosition);
-            RaycastHit cameraHit;
+            isShooting = true;
+            frameCounter = 0;
+            Fire();
+        }
 
-            Vector3 targetPoint;
-            float minDistance = 2f;
-
-            if (Physics.Raycast(cameraRay, out cameraHit, raycastDistance))
+        if (Input.GetMouseButton(0) && isShooting)
+        {
+            frameCounter++;
+            if (frameCounter >= 2 || HasMouseMoved())
             {
-                float hitDistance = Vector3.Distance(cameraRay.origin, cameraHit.point);
-
-                if (hitDistance < minDistance)
-                {
-                    targetPoint = cameraHit.point + cameraRay.direction * (minDistance - hitDistance);
-                }
-                else
-                {
-                    targetPoint = cameraHit.point;
-                }
-            }
-            else
-            {
-                targetPoint = cameraRay.origin + cameraRay.direction * raycastDistance;
-            }
-
-            savedHitPosition = targetPoint;
-            Debug.Log($"Shooting at: {savedHitPosition}");
-            if (gunController != null)
-            {
-                gunController.SetTargetPosition(savedHitPosition);
-                gunController.FireBullet();
-                
-            }
-            if (gunRecoil != null)
-            {
-                gunRecoil.ApplyRecoil();
+                Fire();
+                frameCounter = 0;
             }
         }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            isShooting = false;
+        }
     }
+
+    bool HasMouseMoved()
+    {
+        if (Input.mousePosition != lastMousePosition)
+        {
+            lastMousePosition = Input.mousePosition;
+            return true;
+        }
+        return false;
+    }
+
+    void Fire()
+    {
+        if (firePoint == null || mainCamera == null) return;
+
+        flash.Play();
+        adusource.PlayOneShot(aduclip);
+        animator.Play("Shoot", 0, 0);
+
+        Vector3 direction = (savedHitPosition - firePoint.position).normalized;
+        RaycastHit[] hits = Physics.RaycastAll(firePoint.position, direction, raycastDistance);
+
+        bool isHeadshot = false;
+        bool isBodyshot = false;
+        RaycastHit? closestHit = null;
+        float closestDistance = float.MaxValue;
+        Heath targetHealth = null;
+
+        foreach (RaycastHit hit in hits)
+        {
+            float distance = Vector3.Distance(firePoint.position, hit.point);
+
+            if (distance < closestDistance)
+            {
+                closestHit = hit;
+                closestDistance = distance;
+            }
+
+            Transform hitTransform = hit.collider.transform;
+
+            if (hitTransform.CompareTag("ZombieHead"))
+            {
+                isHeadshot = true;
+                targetHealth = hit.collider.GetComponent<Heath>();
+            }
+            else if (hitTransform.CompareTag("Zombie") || hitTransform.CompareTag("ZombieBody"))
+            {
+                isBodyshot = true;
+                if (targetHealth == null)
+                    targetHealth = hit.collider.GetComponent<Heath>();
+            }
+
+            if (hitTransform.parent != null)
+            {
+                Transform parent = hitTransform.parent;
+                if (parent.CompareTag("ZombieHead"))
+                {
+                    isHeadshot = true;
+                    targetHealth = parent.GetComponent<Heath>();
+                }
+                else if (parent.CompareTag("Zombie"))
+                {
+                    isBodyshot = true;
+                    if (targetHealth == null)
+                        targetHealth = parent.GetComponent<Heath>();
+                }
+            }
+        }
+
+        if (closestHit.HasValue && targetHealth != null)
+        {
+            RaycastHit hit = closestHit.Value;
+            Instantiate(bullethit, hit.point, quaternion.identity);
+
+            int damageToApply = damageout;
+            if (isHeadshot)
+            {
+                damageToApply *= 2;
+                Debug.Log("🔥 Headshot! Damage: " + damageToApply);
+            }
+            else if (isBodyshot)
+            {
+                Debug.Log("💥 Bodyshot! Damage: " + damageToApply);
+            }
+
+            targetHealth.TakeDamage(damageToApply);
+        }
+    }
+
+
 
 }
