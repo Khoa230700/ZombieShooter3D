@@ -4748,7 +4748,7 @@ MonoBehaviour:
   zombiesPerWave: 5
   spawnDelay: 2
   waveDelay: 5
-  maxWave: 3
+  maxWave: 10
   zombiesRemaining: 0
   textMeshProWave: {fileID: 288671098}
   textMeshProZom: {fileID: 1510254774}

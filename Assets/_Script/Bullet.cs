@@ -42,7 +42,7 @@ public class Bullet : MonoBehaviour
         if (!hasHit)
         {
             hasHit = true;
-            Debug.Log($"Bullet hit: {other.gameObject.name}, Tag: {other.gameObject.tag}");
+            //Debug.Log($"Bullet hit: {other.gameObject.name}, Tag: {other.gameObject.tag}");
 
             Destroy(gameObject);
         }

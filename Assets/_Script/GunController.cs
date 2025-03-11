@@ -67,7 +67,7 @@ public class GunController : MonoBehaviour
     private void Fire()
     {
         SetTargetPosition(ShootPoint.savedHitPosition);
-        Debug.Log($"Firing at target position: {targetPosition}");
+        //Debug.Log($"Firing at target position: {targetPosition}");
         FireBullet();
         if (ShootPoint != null)
         {
