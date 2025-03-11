@@ -31,6 +31,7 @@ public class RaycastShooter : MonoBehaviour
     private int frameCounter = 0;
     private Vector3 lastMousePosition;
 
+    public BangDan_sCRIPT bangDan_SCRIPT;
     void Start()
     {
         if (crosshair != null)
@@ -110,11 +111,14 @@ public class RaycastShooter : MonoBehaviour
 
     public void HandleShooting()
     {
+        //bangDan_SCRIPT.TruDan(1);
         if (Input.GetMouseButtonDown(0))
         {
             isShooting = true;
             frameCounter = 0;
+            bangDan_SCRIPT.TruDan(1);
             Fire();
+
         }
 
         if (Input.GetMouseButton(0) && isShooting)
@@ -122,6 +126,7 @@ public class RaycastShooter : MonoBehaviour
             frameCounter++;
             if (frameCounter >= 2 || HasMouseMoved())
             {
+                bangDan_SCRIPT.TruDan(1);
                 Fire();
                 frameCounter = 0;
             }
@@ -200,6 +205,7 @@ public class RaycastShooter : MonoBehaviour
                 }
             }
         }
+
 
         if (closestHit.HasValue && targetHealth != null)
         {
