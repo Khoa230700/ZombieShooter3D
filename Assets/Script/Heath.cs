@@ -2,16 +2,16 @@
 
 public class Heath : MonoBehaviour
 {
-    public int enemyHealth;
+    public int Health;
     private int currentHealth;
-    public Spawn spawn;
+    private Spawn spawn;
     public Animator animator;
     private bool isDead = false;
     void Start()
     {
         spawn = FindObjectOfType<Spawn>();
         
-        currentHealth = enemyHealth;
+        currentHealth = Health;
     }
     public void TakeDamage(int damage)
     {
@@ -33,4 +33,5 @@ public class Heath : MonoBehaviour
         animator.SetTrigger("DieFB");
         Destroy(gameObject, 2f);
     }
+   
 }

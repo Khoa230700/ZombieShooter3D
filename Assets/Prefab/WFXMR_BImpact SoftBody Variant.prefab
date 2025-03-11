@@ -16,6 +16,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: WFXMR_BImpact SoftBody Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 100002, guid: f75efcef4bb42054abf94f8e5c701adc, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 100004, guid: f75efcef4bb42054abf94f8e5c701adc, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: f75efcef4bb42054abf94f8e5c701adc, type: 3}
       propertyPath: m_LocalPosition.x
       value: 38.02319
@@ -71,6 +79,18 @@ PrefabInstance:
     - target: {fileID: 19800000, guid: f75efcef4bb42054abf94f8e5c701adc, type: 3}
       propertyPath: InitialModule.startRotationY.minMaxState
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 19800002, guid: f75efcef4bb42054abf94f8e5c701adc, type: 3}
+      propertyPath: stopAction
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 19800002, guid: f75efcef4bb42054abf94f8e5c701adc, type: 3}
+      propertyPath: lengthInSec
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 19800002, guid: f75efcef4bb42054abf94f8e5c701adc, type: 3}
+      propertyPath: InitialModule.startSize.minScalar
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 19800004, guid: f75efcef4bb42054abf94f8e5c701adc, type: 3}
       propertyPath: InitialModule.startColor.maxColor.b
