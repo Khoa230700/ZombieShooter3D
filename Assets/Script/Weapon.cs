@@ -13,13 +13,13 @@ public class Weapon : MonoBehaviour
     public ParticleSystem bullethit;
     public GameObject hitvfx;
     public int damageout;
-
+    public RaycastShooter shooter;
     [Header("Raycast Settings")]
     public Transform firePoint;
     public Camera mainCamera;
     public float raycastDistance = 100f;
 
-    void Update()
+    public void Shoot()
     {
         if (inputs.shoot)
         {
@@ -35,15 +35,9 @@ public class Weapon : MonoBehaviour
         flash.Play();
         adusource.PlayOneShot(aduclip);
         animator.Play("Shoot", 0, 0);
-        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
+        Vector3 targetPoint = shooter.savedHitPosition;
 
-        Vector3 targetPoint = firePoint.position + firePoint.forward * raycastDistance;
-        if (Physics.Raycast(ray, out hit, raycastDistance))
-        {
-            targetPoint = hit.point;
-        }
-        if (Physics.Raycast(firePoint.position, (targetPoint - firePoint.position).normalized, out hit, raycastDistance))
+        if (Physics.Raycast(firePoint.position, (targetPoint - firePoint.position).normalized, out RaycastHit hit, raycastDistance))
         {
             Instantiate(bullethit, hit.point, quaternion.identity);
             Heath health = hit.collider.GetComponent<Heath>();

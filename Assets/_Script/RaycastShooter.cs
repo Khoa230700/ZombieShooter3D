@@ -1,19 +1,35 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using Unity.Mathematics;
+using StarterAssets;
 
 public class RaycastShooter : MonoBehaviour
 {
+    [Header("Raycast Settings")]
+    public Transform firePoint;
     public Transform shootPoint;
     public Camera mainCamera;
-    public RawImage crosshair;
     public float raycastDistance = 100f;
+
+    [Header("Crosshair Settings")]
+    public RawImage crosshair;
     public Color defaultColor = Color.white;
     public Color hitZombieColor = Color.red;
     public Color hitZombieHeadColor = Color.green;
-    public Vector3 savedHitPosition;
-    public GunRecoil gunRecoil;
 
-    public GunController gunController; // Tham chiếu đến GunController
+    [Header("Weapon Settings")]
+    public StarterAssetsInputs inputs;
+    public AudioClip aduclip;
+    public AudioSource adusource;
+    public Animator animator;
+    public ParticleSystem flash;
+    public ParticleSystem bullethit;
+    public int damageout;
+
+    public Vector3 savedHitPosition;
+    private bool isShooting = false;
+    private int frameCounter = 0;
+    private Vector3 lastMousePosition;
 
     void Start()
     {
@@ -25,11 +41,11 @@ public class RaycastShooter : MonoBehaviour
 
     void Update()
     {
-        ShootRaycast();
-        CheckMouseClick();
+        UpdateTargetPosition();
+        HandleShooting();
     }
 
-    void ShootRaycast()
+    void UpdateTargetPosition()
     {
         if (shootPoint == null || mainCamera == null) return;
 
@@ -37,14 +53,29 @@ public class RaycastShooter : MonoBehaviour
         Ray cameraRay = mainCamera.ScreenPointToRay(mousePosition);
         RaycastHit cameraHit;
 
-        Vector3 targetPoint = shootPoint.position + shootPoint.forward * raycastDistance;
+        Vector3 targetPoint = cameraRay.origin + cameraRay.direction * raycastDistance;
+
         if (Physics.Raycast(cameraRay, out cameraHit, raycastDistance))
         {
             targetPoint = cameraHit.point;
         }
 
-        Vector3 direction = (targetPoint - shootPoint.position).normalized;
-        Ray ray = new Ray(shootPoint.position, direction);
+        // Nếu quá gần vật thể, tránh thay đổi vị trí đột ngột
+        float minDistance = 2f;
+        float hitDistance = Vector3.Distance(shootPoint.position, targetPoint);
+
+        if (hitDistance < minDistance)
+        {
+            targetPoint = shootPoint.position + cameraRay.direction * minDistance;
+        }
+
+        savedHitPosition = targetPoint;
+        UpdateCrosshair(targetPoint);
+    }
+
+    void UpdateCrosshair(Vector3 targetPoint)
+    {
+        Ray ray = new Ray(shootPoint.position, (targetPoint - shootPoint.position).normalized);
         RaycastHit hit;
 
         if (Physics.Raycast(ray, out hit, raycastDistance))
@@ -68,48 +99,60 @@ public class RaycastShooter : MonoBehaviour
         }
     }
 
-    void CheckMouseClick()
+    public void HandleShooting()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Vector3 mousePosition = Input.mousePosition;
-            Ray cameraRay = mainCamera.ScreenPointToRay(mousePosition);
-            RaycastHit cameraHit;
+            isShooting = true;
+            frameCounter = 0;
+            Fire();
+        }
 
-            Vector3 targetPoint;
-            float minDistance = 2f;
+        if (Input.GetMouseButton(0) && isShooting)
+        {
+            frameCounter++;
+            if (frameCounter >= 2 || HasMouseMoved())
+            {
+                Fire();
+                frameCounter = 0;
+            }
+        }
 
-            if (Physics.Raycast(cameraRay, out cameraHit, raycastDistance))
-            {
-                float hitDistance = Vector3.Distance(cameraRay.origin, cameraHit.point);
-
-                if (hitDistance < minDistance)
-                {
-                    targetPoint = cameraHit.point + cameraRay.direction * (minDistance - hitDistance);
-                }
-                else
-                {
-                    targetPoint = cameraHit.point;
-                }
-            }
-            else
-            {
-                targetPoint = cameraRay.origin + cameraRay.direction * raycastDistance;
-            }
-
-            savedHitPosition = targetPoint;
-            Debug.Log($"Shooting at: {savedHitPosition}");
-            if (gunController != null)
-            {
-                gunController.SetTargetPosition(savedHitPosition);
-                gunController.FireBullet();
-                
-            }
-            if (gunRecoil != null)
-            {
-                gunRecoil.ApplyRecoil();
-            }
+        if (Input.GetMouseButtonUp(0))
+        {
+            isShooting = false;
         }
     }
 
+    bool HasMouseMoved()
+    {
+        if (Input.mousePosition != lastMousePosition)
+        {
+            lastMousePosition = Input.mousePosition;
+            return true;
+        }
+        return false;
+    }
+
+    void Fire()
+    {
+        if (firePoint == null || mainCamera == null) return;
+
+        flash.Play();
+        adusource.PlayOneShot(aduclip);
+        animator.Play("Shoot", 0, 0);
+
+        Vector3 direction = (savedHitPosition - firePoint.position).normalized;
+        if (Physics.Raycast(firePoint.position, direction, out RaycastHit hit, raycastDistance))
+        {
+            Instantiate(bullethit, hit.point, quaternion.identity);
+
+            Heath health = hit.collider.GetComponent<Heath>();
+            if (health)
+            {
+                Debug.Log($"Hit: {hit.collider.name}, Damage: {damageout}");
+                health.TakeDamage(damageout);
+            }
+        }
+    }
 }
