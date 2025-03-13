@@ -45,22 +45,10 @@ public class Zombie : MonoBehaviour
         // tính khoảng cách giữa quái và vị trí ban đầu nhân vật
         var distance = Vector3.Distance(BOT.position, Player.transform.position);
 
-        if (distance <= 1.4f)
+        if (distance <= 2f)
         {
             animator.SetTrigger("Attack");
-            //if (Time.time >= nextAttackTime)
-            //{
-            //    // Kích hoạt animation tấn công
-            //    animator.SetTrigger("Attack");
-
-            //    // Cập nhật thời điểm cho lần tấn công kế tiếp
-            //    nextAttackTime = Time.time + attackCooldown;
-            //}
-            //else
-            //{
-            //    // Trong lúc chờ, chuyển sang animation idle
-            //    animator.Play("Z_Idle", 0, 0);
-            //}
+           
         }
         else
         {
