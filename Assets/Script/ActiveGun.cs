@@ -13,7 +13,7 @@ public class ActiveGun : MonoBehaviour
     float timelastshot;
     void Start()
     {
-        currentshooter = FindObjectOfType<RaycastShooter>();
+        //currentshooter = FindObjectOfType<RaycastShooter>();
     }
 
     // Update is called once per frame

@@ -1,7 +1,7 @@
 ﻿using JetBrains.Annotations;
 using System.Collections;
 using System.Linq.Expressions;
-using TreeEditor;
+//using TreeEditor;
 using UnityEngine;
 using UnityEngine.AI;
 using static UnityEngine.GraphicsBuffer;
@@ -28,9 +28,9 @@ public class Zombie : MonoBehaviour
                 Player = GameObject.FindGameObjectWithTag("Player");
             }
             if (playerHealth == null)
-        {
-            playerHealth = FindObjectOfType<PlayerHealth>();
-        }
+            {
+                //playerHealth = FindObjectOfType<PlayerHealth>();
+            }
         
     }
     private void Start()
