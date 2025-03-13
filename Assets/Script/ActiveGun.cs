@@ -13,7 +13,7 @@ public class ActiveGun : MonoBehaviour
     float timelastshot;
     void Start()
     {
-        currentshooter = FindObjectOfType<RaycastShooter>();
+        //currentshooter = FindObjectOfType<RaycastShooter>();
     }
 
     // Update is called once per frame
@@ -32,7 +32,7 @@ public class ActiveGun : MonoBehaviour
         {
             if (timelastshot >= gunso.FireRate)
             {
-                currentshooter.CheckMouseClick(gunso);
+                //currentshooter.CheckMouseClick(gunso);
                 //flash.Play();
                 adusource.PlayOneShot(aduclip);
                 animator.Play("RilfeShoot", 0, 0);
