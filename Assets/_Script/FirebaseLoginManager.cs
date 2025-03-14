@@ -1,8 +1,10 @@
-﻿using Firebase;
+﻿using System.Collections;
+using System.Collections.Generic;
+using Firebase;
 using Firebase.Auth;
+using Firebase.Database;
 using Firebase.Extensions;
 using UnityEngine;
-using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -14,7 +16,10 @@ public class FirebaseLoginManager : MonoBehaviour
     public InputField RePassword;
     public Button BttRegister;
     public Text Notification;
+
     private FirebaseAuth auth;
+    private FirebaseDatabase database;
+    private DatabaseReference reference;
 
     [Header("Đăng nhập")]
     public InputField LoginEmail;
@@ -28,14 +33,25 @@ public class FirebaseLoginManager : MonoBehaviour
     public Button BttSignup;
     public Button BttBack;
 
-
     private void Start()
     {
-        auth = FirebaseAuth.DefaultInstance;
+        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.Result == DependencyStatus.Available)
+            {
+                FirebaseApp app = FirebaseApp.DefaultInstance;
+                auth = FirebaseAuth.DefaultInstance;
+                database = FirebaseDatabase.GetInstance(app, "https://zombieshooter-f4929-default-rtdb.asia-southeast1.firebasedatabase.app/");
+                reference = database.RootReference;
+
+            }
+        });
+
         BttRegister.onClick.AddListener(RegisterFirebase);
         BttLogin.onClick.AddListener(LoginFirebase);
         BttBack.onClick.AddListener(Login);
         BttSignup.onClick.AddListener(SignUp);
+        Login();
     }
 
     private void RegisterFirebase()
@@ -66,60 +82,111 @@ public class FirebaseLoginManager : MonoBehaviour
         {
             if (task.IsFaulted)
             {
-                FirebaseException firebaseEx = task.Exception?.GetBaseException() as FirebaseException;
-                if (firebaseEx != null)
-                {
-                    Notification.text = $"Lỗi: {firebaseEx.Message}";
-                }
-                else
-                {
-                    Notification.text = "Đăng ký thất bại. Vui lòng thử lại!";
-                }
+                Notification.text = $"Lỗi: {task.Exception?.GetBaseException().Message}";
                 return;
             }
 
             if (task.IsCompletedSuccessfully)
             {
-                Notification.text = "Đăng ký thành công!";
+                FirebaseUser newUser = task.Result.User;
+                if (newUser != null)
+                {
+                    Notification.text = "Đăng ký thành công!";
+                    StartCoroutine(SaveUserDataWithDelay(newUser));
+                }
             }
         });
     }
 
     public void LoginFirebase()
     {
-        string email = LoginEmail.text;
-        string password = Password.text;
+        string email = LoginEmail.text.Trim();
+        string password = LoginPassword.text.Trim();
+
+        if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+        {
+            LoginNoti.text = "Email hoặc mật khẩu không được để trống!";
+            return;
+        }
 
         auth.SignInWithEmailAndPasswordAsync(email, password).ContinueWithOnMainThread(task =>
         {
-            if(task.IsCanceled)
+            if (task.IsCanceled)
             {
-                LoginNoti.text = "Login Canceled";
-            }    
-            if(task.IsFaulted)
+                LoginNoti.text = "Đăng nhập bị hủy!";
+                return;
+            }
+            if (task.IsFaulted)
             {
-                LoginNoti.text = "Fail to login!!";
-            }    
-            if(task.IsCompleted)
+                FirebaseException firebaseEx = task.Exception?.GetBaseException() as FirebaseException;
+                if (firebaseEx != null)
+                {
+                    LoginNoti.text = $"Lỗi đăng nhập: {firebaseEx.Message}";
+                }
+                else
+                {
+                    LoginNoti.text = "Đăng nhập thất bại. Vui lòng kiểm tra email/mật khẩu!";
+                }
+                return;
+            }
+            if (task.IsCompletedSuccessfully)
             {
-                LoginNoti.text = "Login Success!!";
+                LoginNoti.text = "Đăng nhập thành công!";
                 FirebaseUser user = task.Result.User;
-
-                SceneManager.LoadScene("RankingScene");
-            }    
-
+                if (user != null)
+                {
+                    SceneManager.LoadScene(2);
+                }
+            }
         });
-    }    
+    }
+
+    private void SaveUserData(FirebaseUser user)
+    {
+
+        if (string.IsNullOrEmpty(user.UserId))
+        {
+            return;
+        }
+
+        if (reference == null)
+        {
+            return;
+        }
+
+        Dictionary<string, object> userData = new Dictionary<string, object>
+        {
+            { "email", user.Email },
+            { "rank", "null" },
+            { "point", 0 },
+            { "wave", 0 },
+            { "kill", 0 },
+            { "headshot", 0 }
+        };
+
+
+        reference.Child("users").Child(user.UserId).SetValueAsync(userData).ContinueWithOnMainThread(task =>
+        {
+        });
+    }
+
+    private IEnumerator SaveUserDataWithDelay(FirebaseUser user)
+    {
+        yield return new WaitForSeconds(2f);
+        SaveUserData(user);
+    }
 
     public void SignUp()
     {
         PanelLogin.SetActive(false);
         PanelSignup.SetActive(true);
+        LoginPassword.text = "";
     }
 
     public void Login()
     {
         PanelSignup.SetActive(false);
         PanelLogin.SetActive(true);
+        LoginPassword.text = "";
     }
 }
