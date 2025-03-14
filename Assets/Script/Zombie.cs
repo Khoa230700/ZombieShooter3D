@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 //using TreeEditor;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Audio;
 using static UnityEngine.GraphicsBuffer;
 
 public class Zombie : MonoBehaviour
@@ -16,6 +17,8 @@ public class Zombie : MonoBehaviour
     [SerializeField] public int Damege = 40;
     [SerializeField] private CapsuleCollider capsuleCollider;
     [SerializeField] private PlayerHealth playerHealth;
+    [SerializeField] private AudioClip adidoclip;
+    [SerializeField] private AudioSource adidocsource;
 
     public float attackCooldown = 3f;  // Thời gian chờ giữa các đợt tấn công
     private float nextAttackTime = 0f; // Thời điểm cho phép tấn công tiếp theo
@@ -29,9 +32,9 @@ public class Zombie : MonoBehaviour
             }
             if (playerHealth == null)
             {
-                //playerHealth = FindObjectOfType<PlayerHealth>();
-            }
-        
+            playerHealth = FindObjectOfType<PlayerHealth>();
+        }
+
     }
     private void Start()
     {
@@ -41,18 +44,23 @@ public class Zombie : MonoBehaviour
     }
     private void Update()
     {
+        
         agent.SetDestination(Player.transform.position);
         // tính khoảng cách giữa quái và vị trí ban đầu nhân vật
         var distance = Vector3.Distance(BOT.position, Player.transform.position);
 
-        if (distance <= 2f)
+        if (distance <= 2.2f)
         {
             animator.SetTrigger("Attack");
-           
+            adidocsource.Stop();
         }
         else
         {
+            if (Vector3.Distance(transform.position, Player.transform.position) < 50f && !adidocsource.isPlaying)
+            {
+                adidocsource.PlayOneShot(adidoclip);
             //đuổi theo nhân vật
+            }
             agent.SetDestination(Player.transform.position);
             animator.SetBool(_speedHash, true);
         }
