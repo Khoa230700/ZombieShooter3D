@@ -25,7 +25,7 @@ public class Spawn : MonoBehaviour
     }
     private void Update()
     {
-        textMeshProWave.text = "WAVE: " + waveNumber.ToString();
+        textMeshProWave.text = waveNumber.ToString();
         textMeshProZom.text = zombiesRemaining.ToString();
    
 
