@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using Unity.Mathematics;
 using StarterAssets;
+using System.Security.Cryptography.X509Certificates;
 
 public class RaycastShooter : MonoBehaviour
 {
@@ -30,8 +31,9 @@ public class RaycastShooter : MonoBehaviour
     private bool isShooting = false;
     private int frameCounter = 0;
     private Vector3 lastMousePosition;
+    private int ammo = 10;
 
-    public BangDan_sCRIPT bangDan_SCRIPT;
+    //public BangDan_sCRIPT bangDan_SCRIPT;
     void Start()
     {
         if (crosshair != null)
@@ -114,27 +116,36 @@ public class RaycastShooter : MonoBehaviour
         //bangDan_SCRIPT.TruDan(1);
         if (Input.GetMouseButtonDown(0))
         {
+       
             isShooting = true;
             frameCounter = 0;
-            bangDan_SCRIPT.TruDan(1);
+            //bangDan_SCRIPT.TruDan(1);
+            flash.Play();
             Fire();
-
         }
 
         if (Input.GetMouseButton(0) && isShooting)
         {
+            
             frameCounter++;
             if (frameCounter >= 2 || HasMouseMoved())
             {
-                bangDan_SCRIPT.TruDan(1);
+                //bangDan_SCRIPT.TruDan(1);
+                if (!flash.isPlaying)
+                {
+                flash.Play();
                 Fire();
+
                 frameCounter = 0;
+                }
+                
             }
         }
 
         if (Input.GetMouseButtonUp(0))
         {
             isShooting = false;
+            
         }
     }
 
@@ -152,10 +163,9 @@ public class RaycastShooter : MonoBehaviour
     {
         if (firePoint == null || mainCamera == null) return;
 
-        flash.Play();
         adusource.PlayOneShot(aduclip);
         animator.Play("Shoot", 0, 0);
-
+        
         Vector3 direction = (savedHitPosition - firePoint.position).normalized;
         RaycastHit[] hits = Physics.RaycastAll(firePoint.position, direction, raycastDistance);
 
@@ -226,7 +236,11 @@ public class RaycastShooter : MonoBehaviour
             targetHealth.TakeDamage(damageToApply);
         }
     }
-
+    public void OnReloadComplete()
+    {
+        ammo = 10;
+    
+    }
 
 
 }
