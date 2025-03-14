@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using Unity.Mathematics;
 using StarterAssets;
 using System.Security.Cryptography.X509Certificates;
+using TMPro;
 
 public class RaycastShooter : MonoBehaviour
 {
@@ -32,10 +33,22 @@ public class RaycastShooter : MonoBehaviour
     private int frameCounter = 0;
     private Vector3 lastMousePosition;
     private int ammo = 10;
+    
+    public TotalScore_Script totalScore_Script;
 
+   //// public Text _bodyScoreText;
+   // public Text _headScoreText;
+   // public Text _totalScoreText;
+
+   // [SerializeField] private TextMeshProUGUI _bodyScoreText;
+
+   // public float _scoreBody;
+   // public float _scoreHead;
+   // public float _totalScore;
     //public BangDan_sCRIPT bangDan_SCRIPT;
     void Start()
     {
+       
         if (crosshair != null)
         {
             crosshair.color = defaultColor;
@@ -46,6 +59,9 @@ public class RaycastShooter : MonoBehaviour
     {
         UpdateTargetPosition();
         HandleShooting();
+       // totalScore_Script.ScoreHeadSort(20);
+        // _bodyScoreText.text = _scoreBody.ToString();
+        //SocreManager();
     }
 
     void UpdateTargetPosition()
@@ -205,11 +221,13 @@ public class RaycastShooter : MonoBehaviour
                 if (parent.CompareTag("ZombieHead"))
                 {
                     isHeadshot = true;
+                    //totalScore_Script.ScoreHeadSort(20);
                     targetHealth = parent.GetComponent<Heath>();
                 }
                 else if (parent.CompareTag("Zombie"))
                 {
                     isBodyshot = true;
+                    //totalScore_Script.ScoreBody(10);
                     if (targetHealth == null)
                         targetHealth = parent.GetComponent<Heath>();
                 }
@@ -226,10 +244,14 @@ public class RaycastShooter : MonoBehaviour
             if (isHeadshot)
             {
                 damageToApply *= 2;
+               // _scoreHead += 20;
+               totalScore_Script.ScoreHeadSort(20);
                 Debug.Log("🔥 Headshot! Damage: " + damageToApply);
             }
             else if (isBodyshot)
             {
+                //_scoreBody += 10;
+               totalScore_Script.ScoreBody(10);
                 Debug.Log("💥 Bodyshot! Damage: " + damageToApply);
             }
 
