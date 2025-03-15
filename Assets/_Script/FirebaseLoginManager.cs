@@ -5,6 +5,7 @@ using Firebase.Auth;
 using Firebase.Database;
 using Firebase.Extensions;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -31,10 +32,14 @@ public class FirebaseLoginManager : MonoBehaviour
     public GameObject PanelLogin;
     public GameObject PanelSignup;
     public Button BttSignup;
+    private AudioSource SignupSound;
     public Button BttBack;
+    private AudioSource BackSound;
     private DatabaseReference databaseRef;
     private void Start()
     {
+        BackSound = BttBack.GetComponent<AudioSource>();
+        SignupSound = BttSignup.GetComponent<AudioSource>();
         databaseRef = FirebaseDatabase.DefaultInstance.RootReference;
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
         {
@@ -208,18 +213,36 @@ public class FirebaseLoginManager : MonoBehaviour
         yield return new WaitForSeconds(2f);
         SaveUserData(user);
     }
-
+    private IEnumerator WaitForSoundThenClosePanel(AudioSource audioSource, GameObject panelToClose)
+    {
+        while (audioSource.isPlaying)
+        {
+            yield return null;
+        }
+        panelToClose.SetActive(false);
+    }
+    private IEnumerator WaitForSoundThenOpenPanel(AudioSource audioSource, GameObject panelToOpen)
+    {
+        while (audioSource.isPlaying)
+        {
+            yield return null;
+        }
+        panelToOpen.SetActive(true);
+    }
     public void SignUp()
     {
-        PanelLogin.SetActive(false);
-        PanelSignup.SetActive(true);
+        SignupSound.Play();
+        StartCoroutine(WaitForSoundThenClosePanel(SignupSound, PanelLogin));
+        StartCoroutine(WaitForSoundThenOpenPanel(SignupSound, PanelSignup));
         LoginPassword.text = "";
     }
 
+
     public void Login()
     {
-        PanelSignup.SetActive(false);
-        PanelLogin.SetActive(true);
+        BackSound.Play();
+        StartCoroutine(WaitForSoundThenClosePanel(BackSound,PanelSignup));
+        StartCoroutine(WaitForSoundThenOpenPanel(BackSound, PanelLogin));
         LoginPassword.text = "";
     }
 }

@@ -15,9 +15,12 @@ public class RankingController : MonoBehaviour
     private DatabaseReference databaseRef;
     private bool firebaseInitialized = false;
     public Button toPrepare, toWelcome;
+    private AudioSource toprepareSound, toWelcomeSound;
 
     void Start()
     {
+        toprepareSound = toPrepare.GetComponent<AudioSource>();
+        toWelcomeSound = toWelcome.GetComponent<AudioSource>();
         toPrepare.onClick.AddListener(ToPrepareScene);
         toWelcome.onClick.AddListener(BackToWelcomeScene);
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
@@ -31,15 +34,24 @@ public class RankingController : MonoBehaviour
             }
         });
     }
-
+    private IEnumerator WaitForSoundThenChangeScene(int sceneIndex, AudioSource audioSource)
+    {
+        while (audioSource.isPlaying)
+        {
+            yield return null;
+        }
+        SceneManager.LoadScene(sceneIndex);
+    }
     public void ToPrepareScene()
     {
-        SceneManager.LoadScene(3);
+        toprepareSound.Play();
+        StartCoroutine(WaitForSoundThenChangeScene(3,toprepareSound));
     }   
     
     public void BackToWelcomeScene()
     {
-        SceneManager.LoadScene(1);
+        toWelcomeSound.Play();
+        StartCoroutine(WaitForSoundThenChangeScene(1,toWelcomeSound));
     }    
 
     void LoadTopPlayers()

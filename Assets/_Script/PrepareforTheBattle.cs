@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 public class PrepareforTheBattle : MonoBehaviour
 {
     public Button StarttheBattle, ImnotReady, WaitAMinute;
+    private AudioSource ImnotReadySound,StarttheBattlesound,WaitAMinuteSound;
     public Text countdownText;
     public float holdTime = 3f;
     public bool voiceEnd = false;
@@ -15,6 +16,9 @@ public class PrepareforTheBattle : MonoBehaviour
 
     private void Start()
     {
+        ImnotReadySound = ImnotReady.GetComponent<AudioSource>();
+        StarttheBattlesound = StarttheBattle.GetComponent<AudioSource>();
+        WaitAMinuteSound = WaitAMinute.GetComponent<AudioSource>();
         if (audioSource == null)
             audioSource = GetComponent<AudioSource>();
 
@@ -72,20 +76,38 @@ public class PrepareforTheBattle : MonoBehaviour
         SceneManager.LoadScene(4);
     }
 
+    private IEnumerator WaitForSoundThenChangeScene(int sceneIndex, AudioSource audioSource)
+    {
+        while (audioSource.isPlaying)
+        {
+            yield return null;
+        }
+        SceneManager.LoadScene(sceneIndex);
+    }
     void TurningBack()
     {
-        SceneManager.LoadScene(2);
+        ImnotReadySound.Play();
+        StartCoroutine(WaitForSoundThenChangeScene(2, ImnotReadySound));
+    }
+    private IEnumerator WaitForSoundThenChangeButton(Button Gameobjecttochange,Button Gameobjecttoclose, AudioSource audioSource)
+    {
+        while (audioSource.isPlaying)
+        {
+            yield return null;
+        }
+        Gameobjecttochange.gameObject.SetActive(true);
+        Gameobjecttoclose.gameObject.SetActive(false);
     }
 
     void Waitforme()
     {
-        StarttheBattle.gameObject.SetActive(true);
-        WaitAMinute.gameObject.SetActive(false);
+        WaitAMinuteSound.Play();
+        StartCoroutine(WaitForSoundThenChangeButton(StarttheBattle,WaitAMinute,WaitAMinuteSound));
     }
 
     void Okimready()
     {
-        StarttheBattle.gameObject.SetActive(false);
-        WaitAMinute.gameObject.SetActive(true);
+        StarttheBattlesound.Play();
+        StartCoroutine(WaitForSoundThenChangeButton(WaitAMinute, StarttheBattle,StarttheBattlesound));
     }
 }
