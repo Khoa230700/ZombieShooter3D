@@ -37,6 +37,7 @@ public class FirebaseLoginManager : MonoBehaviour
     private AudioSource BackSound;
     private DatabaseReference databaseRef;
     public GameObject SettingPanel;
+    public bool SignInBool = false;
     private void Start()
     {
         BackSound = BttBack.GetComponent<AudioSource>();
@@ -59,8 +60,29 @@ public class FirebaseLoginManager : MonoBehaviour
         BttBack.onClick.AddListener(Login);
         BttSignup.onClick.AddListener(SignUp);
         Login();
-    }
+        RegisterEmail.onEndEdit.AddListener(OnInputEnd);
+        Password.onEndEdit.AddListener(OnInputEnd);
+        RePassword.onEndEdit.AddListener(OnInputEnd);
+        LoginEmail.onEndEdit.AddListener(OnInputEnd);
+        LoginPassword.onEndEdit.AddListener(OnInputEnd);
 
+    }
+    private void OnInputEnd(string text)
+    {
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+        {
+            Debug.Log("Enter Pressed in InputField!");
+
+            if (SignInBool)
+            {
+                LoginFirebase();
+            }
+            else
+            {
+                RegisterFirebase();
+            }
+        }
+    }
     private void Awake()
     {
         SettingPanel.SetActive(true);
@@ -237,6 +259,7 @@ public class FirebaseLoginManager : MonoBehaviour
     }
     public void SignUp()
     {
+        SignInBool = false;
         SignupSound.Play();
         StartCoroutine(WaitForSoundThenClosePanel(SignupSound, PanelLogin));
         StartCoroutine(WaitForSoundThenOpenPanel(SignupSound, PanelSignup));
@@ -246,6 +269,7 @@ public class FirebaseLoginManager : MonoBehaviour
 
     public void Login()
     {
+        SignInBool = true;
         BackSound.Play();
         StartCoroutine(WaitForSoundThenClosePanel(BackSound,PanelSignup));
         StartCoroutine(WaitForSoundThenOpenPanel(BackSound, PanelLogin));
