@@ -32,9 +32,10 @@ public class FirebaseLoginManager : MonoBehaviour
     public GameObject PanelSignup;
     public Button BttSignup;
     public Button BttBack;
-
+    private DatabaseReference databaseRef;
     private void Start()
     {
+        databaseRef = FirebaseDatabase.DefaultInstance.RootReference;
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
         {
             if (task.Result == DependencyStatus.Available)
@@ -131,15 +132,47 @@ public class FirebaseLoginManager : MonoBehaviour
             }
             if (task.IsCompletedSuccessfully)
             {
-                LoginNoti.text = "Đăng nhập thành công!";
                 FirebaseUser user = task.Result.User;
-                if (user != null)
-                {
-                    SceneManager.LoadScene(2);
-                }
+                EnsureUserDataExists(user);
+                StartCoroutine(DelayedSceneLoad(2));
             }
         });
     }
+
+    IEnumerator DelayedSceneLoad(int sceneIndex)
+    {
+        yield return new WaitForSeconds(1f);
+        SceneManager.LoadScene(sceneIndex);
+    }
+
+    private void EnsureUserDataExists(FirebaseUser user)
+    {
+        if (user == null) return;
+
+        databaseRef.Child("users").Child(user.UserId).GetValueAsync().ContinueWithOnMainThread(task =>
+        {
+            if (!task.Result.Exists)
+            {
+                Dictionary<string, object> userData = new Dictionary<string, object>
+            {
+                { "email", user.Email },
+                { "rank", "null" },
+                { "point", 0 },
+                { "wave", 0 },
+                { "kill", 0 },
+                { "headshot", 0 }
+            };
+
+                databaseRef.Child("users").Child(user.UserId).SetValueAsync(userData).ContinueWithOnMainThread(saveTask =>
+                {
+                    if (saveTask.IsCompletedSuccessfully)
+                    {
+                    }
+                });
+            }
+        });
+    }
+
 
     private void SaveUserData(FirebaseUser user)
     {

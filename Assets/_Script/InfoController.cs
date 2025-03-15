@@ -10,6 +10,7 @@ using UnityEngine.UI;
 public class InfoController : MonoBehaviour
 {
     public Button Back;
+    public Button RankingList;
     public Text WelcomeText;
 
     public Text RankText;
@@ -39,12 +40,18 @@ public class InfoController : MonoBehaviour
         }
 
         Back.onClick.AddListener(BacktoSignin);
+        RankingList.onClick.AddListener(ToRankingList);
     }
 
 
     void BacktoSignin()
     {
         SceneManager.LoadScene(1);
+    }
+
+    void ToRankingList()
+    {
+        SceneManager.LoadScene(3);
     }
 
     private void LoadPlayerData(string userId)
