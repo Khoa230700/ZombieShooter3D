@@ -13,6 +13,12 @@ public class PrepareforTheBattle : MonoBehaviour
     public bool voiceEnd = false;
     public AudioSource audioSource;
     private Coroutine countdownCoroutine;
+    public GameObject SettingPanel;
+
+    private void Awake()
+    {
+        SettingPanel.SetActive(true);
+    }
 
     private void Start()
     {

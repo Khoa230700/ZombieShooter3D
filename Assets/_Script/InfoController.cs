@@ -25,6 +25,7 @@ public class InfoController : MonoBehaviour
 
     private FirebaseAuth auth;
     private DatabaseReference databaseRef;
+    public GameObject SettingPanel;
 
     void Start()
     {
@@ -47,6 +48,11 @@ public class InfoController : MonoBehaviour
 
         Back.onClick.AddListener(BacktoSignin);
         RankingList.onClick.AddListener(ToRankingList);
+    }
+
+    private void Awake()
+    {
+        SettingPanel.SetActive(true);
     }
 
     private IEnumerator WaitForSoundThenChangeScene(int sceneIndex, AudioSource audioSource)
