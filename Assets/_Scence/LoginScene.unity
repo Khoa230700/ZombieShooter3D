@@ -2983,6 +2983,7 @@ MonoBehaviour:
   BttSignup: {fileID: 253303214}
   BttBack: {fileID: 752831969}
   SettingPanel: {fileID: 542135964}
+  SignInBool: 0
 --- !u!82 &1401047760
 AudioSource:
   m_ObjectHideFlags: 0
@@ -4578,29 +4579,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4384443502685075522, guid: c43130b76e018bd4e9fefe46f0124306, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4515677540076868167, guid: c43130b76e018bd4e9fefe46f0124306, type: 3}
       propertyPath: m_Name
       value: SettingPanel
-      objectReference: {fileID: 0}
-    - target: {fileID: 4515677540076868167, guid: c43130b76e018bd4e9fefe46f0124306, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5387489091909689361, guid: c43130b76e018bd4e9fefe46f0124306, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7912383122453625732, guid: c43130b76e018bd4e9fefe46f0124306, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8763704276749318507, guid: c43130b76e018bd4e9fefe46f0124306, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
