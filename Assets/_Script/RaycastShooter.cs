@@ -36,16 +36,7 @@ public class RaycastShooter : MonoBehaviour
     
     public TotalScore_Script totalScore_Script;
 
-   //// public Text _bodyScoreText;
-   // public Text _headScoreText;
-   // public Text _totalScoreText;
-
-   // [SerializeField] private TextMeshProUGUI _bodyScoreText;
-
-   // public float _scoreBody;
-   // public float _scoreHead;
-   // public float _totalScore;
-    //public BangDan_sCRIPT bangDan_SCRIPT;
+    public BangDanScript bangDanScript;
     void Start()
     {
        
@@ -135,7 +126,10 @@ public class RaycastShooter : MonoBehaviour
        
             isShooting = true;
             frameCounter = 0;
+
+            bangDanScript.Shoot();
             //bangDan_SCRIPT.TruDan(1);
+
             flash.Play();
             Fire();
         }
@@ -150,6 +144,7 @@ public class RaycastShooter : MonoBehaviour
                 if (!flash.isPlaying)
                 {
                 flash.Play();
+                bangDanScript.Shoot();
                 Fire();
 
                 frameCounter = 0;
