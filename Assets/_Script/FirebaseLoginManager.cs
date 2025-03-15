@@ -36,6 +36,7 @@ public class FirebaseLoginManager : MonoBehaviour
     public Button BttBack;
     private AudioSource BackSound;
     private DatabaseReference databaseRef;
+    public GameObject SettingPanel;
     private void Start()
     {
         BackSound = BttBack.GetComponent<AudioSource>();
@@ -58,6 +59,11 @@ public class FirebaseLoginManager : MonoBehaviour
         BttBack.onClick.AddListener(Login);
         BttSignup.onClick.AddListener(SignUp);
         Login();
+    }
+
+    private void Awake()
+    {
+        SettingPanel.SetActive(true);
     }
 
     private void RegisterFirebase()

@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Zombie
   - ZombiePre
+  - SFX
+  - ThemeSound
   layers:
   - Default
   - TransparentFX

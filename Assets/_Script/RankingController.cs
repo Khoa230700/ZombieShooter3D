@@ -16,6 +16,7 @@ public class RankingController : MonoBehaviour
     private bool firebaseInitialized = false;
     public Button toPrepare, toWelcome;
     private AudioSource toprepareSound, toWelcomeSound;
+    public GameObject SettingPanel;
 
     void Start()
     {
@@ -33,6 +34,10 @@ public class RankingController : MonoBehaviour
                 StartCoroutine(UpdateRankingLoop());
             }
         });
+    }
+    private void Awake()
+    {
+        SettingPanel.SetActive(true);
     }
     private IEnumerator WaitForSoundThenChangeScene(int sceneIndex, AudioSource audioSource)
     {
