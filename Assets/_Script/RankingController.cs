@@ -5,6 +5,7 @@ using Firebase.Database;
 using Firebase.Extensions;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class RankingController : MonoBehaviour
 {
@@ -13,9 +14,12 @@ public class RankingController : MonoBehaviour
 
     private DatabaseReference databaseRef;
     private bool firebaseInitialized = false;
+    public Button toPrepare, toWelcome;
 
     void Start()
     {
+        toPrepare.onClick.AddListener(ToPrepareScene);
+        toWelcome.onClick.AddListener(BackToWelcomeScene);
         FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
         {
             if (task.Result == DependencyStatus.Available)
@@ -27,6 +31,16 @@ public class RankingController : MonoBehaviour
             }
         });
     }
+
+    public void ToPrepareScene()
+    {
+        SceneManager.LoadScene(3);
+    }   
+    
+    public void BackToWelcomeScene()
+    {
+        SceneManager.LoadScene(1);
+    }    
 
     void LoadTopPlayers()
     {
