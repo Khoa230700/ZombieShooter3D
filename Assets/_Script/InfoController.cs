@@ -1,16 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using Firebase;
 using Firebase.Auth;
 using Firebase.Database;
 using Firebase.Extensions;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class InfoController : MonoBehaviour
 {
     public Button Back;
+    private AudioSource BackSound;
     public Button RankingList;
+    private AudioSource RankingListSound;
     public Text WelcomeText;
 
     public Text RankText;
@@ -24,6 +28,8 @@ public class InfoController : MonoBehaviour
 
     void Start()
     {
+        BackSound = Back.GetComponent<AudioSource>();
+        RankingListSound = RankingList.GetComponent<AudioSource>();
         auth = FirebaseAuth.DefaultInstance;
         databaseRef = FirebaseDatabase.GetInstance(FirebaseApp.DefaultInstance, "https://zombieshooter-f4929-default-rtdb.asia-southeast1.firebasedatabase.app/").RootReference;
 
@@ -43,15 +49,25 @@ public class InfoController : MonoBehaviour
         RankingList.onClick.AddListener(ToRankingList);
     }
 
+    private IEnumerator WaitForSoundThenChangeScene(int sceneIndex, AudioSource audioSource)
+    {
+        while (audioSource.isPlaying)
+        {
+            yield return null;
+        }
+        SceneManager.LoadScene(sceneIndex);
+    }
 
     void BacktoSignin()
     {
-        SceneManager.LoadScene(0);
+        BackSound.Play();
+        StartCoroutine(WaitForSoundThenChangeScene(0, BackSound));
     }
 
     void ToRankingList()
     {
-        SceneManager.LoadScene(2);
+        RankingListSound.Play();
+        StartCoroutine(WaitForSoundThenChangeScene(2, RankingListSound));
     }
 
     private void LoadPlayerData(string userId)
