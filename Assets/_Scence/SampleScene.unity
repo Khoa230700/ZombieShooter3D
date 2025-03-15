@@ -931,6 +931,8 @@ MonoBehaviour:
   tinhDanthay: 0
   thayDan: 0
   _soDanText: {fileID: 1692434301}
+  animatorGun1: {fileID: 187063652}
+  animatorGun2: {fileID: 1779420158}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -1484,12 +1486,12 @@ GameObject:
   - component: {fileID: 430816004}
   - component: {fileID: 430816005}
   m_Layer: 5
-  m_Name: Slider
+  m_Name: Slider_Amor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &430816004
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2064,7 +2066,7 @@ RectTransform:
   m_Father: {fileID: 274471469}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: -2.4999084, y: 0}
   m_SizeDelta: {x: 4.9998, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -3040,7 +3042,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -810.8, y: -414.9}
+  m_AnchoredPosition: {x: -810.8, y: -346}
   m_SizeDelta: {x: 300, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!4 &1190479705 stripped
@@ -6096,6 +6098,8 @@ MonoBehaviour:
   tinhDanthay: 0
   thayDan: 0
   _soDanText: {fileID: 1367264618}
+  animatorGun1: {fileID: 187063652}
+  animatorGun2: {fileID: 1779420158}
 --- !u!1001 &2316312042160655360
 PrefabInstance:
   m_ObjectHideFlags: 0

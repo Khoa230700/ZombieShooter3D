@@ -255,7 +255,7 @@ public class RaycastShooter : MonoBehaviour
     }
     public void OnReloadComplete()
     {
-        ammo = 10;
+        bangDanScript.OnReloadComplete();
     
     }
 

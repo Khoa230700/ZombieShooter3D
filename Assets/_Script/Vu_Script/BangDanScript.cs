@@ -14,7 +14,9 @@ public class BangDanScript : MonoBehaviour
     public int thayDan;
 
     public Text _soDanText;         // Text UI để hiển thị số đạn
-
+    public Animator animatorGun1;
+    public Animator animatorGun2;
+    private bool isReloading = false;
     void Start()
     {
         UpdateAmmoDisplay();
@@ -27,8 +29,18 @@ public class BangDanScript : MonoBehaviour
     }
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.R)) 
+        if (Input.GetKeyDown(KeyCode.R) && !isReloading) 
         {
+            if (animatorGun1 != null)
+            {
+                animatorGun1.Play("Reload", 0, 0);
+            }
+             if (animatorGun2 != null)
+            {
+                animatorGun2.Play("Reload", 0, 0);
+            }
+            isReloading = true;
+          
             Reload();
         }
     }
@@ -48,7 +60,8 @@ public class BangDanScript : MonoBehaviour
 
     public void Reload()
     {
-        if(_danDaNap < _luudanDaNap)
+ 
+        if (_danDaNap < _luudanDaNap)
         {
             tinhDanthay = _luudanDaNap - _danDaNap;
             if( tinhDanthay >= _danChuaNap)
@@ -57,7 +70,15 @@ public class BangDanScript : MonoBehaviour
             }
             _danChuaNap -= tinhDanthay;
             _danDaNap += tinhDanthay;
-
+            if (animatorGun1 != null)
+            {
+                animatorGun1.Play("Reload", 0, 0);
+            }
+            if (animatorGun2 != null)
+            {
+                animatorGun2.Play("Reload", 0, 0);
+            }
+            isReloading = true;
             UpdateAmmoDisplay();                            
         }
         else
@@ -72,6 +93,11 @@ public class BangDanScript : MonoBehaviour
         _soBangDan++; // Tăng số băng đạn còn lại
         UpdateAmmoDisplay();
         Debug.Log("Nhặt được băng đạn! Băng đạn còn lại: " + _soBangDan);
+    }
+    public void OnReloadComplete()
+    {
+
+        isReloading = false;
     }
 }
 
