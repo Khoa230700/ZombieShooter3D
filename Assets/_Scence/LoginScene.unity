@@ -2092,6 +2092,7 @@ GameObject:
   - component: {fileID: 925577747}
   - component: {fileID: 925577749}
   - component: {fileID: 925577748}
+  - component: {fileID: 925577750}
   m_Layer: 5
   m_Name: Signup Panel
   m_TagString: Untagged
@@ -2166,6 +2167,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 925577746}
   m_CullTransparentMesh: 1
+--- !u!114 &925577750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 925577746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29e8c69726a4faa408c5c7853278440e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputFields:
+  - {fileID: 479333497}
+  - {fileID: 912795986}
+  - {fileID: 1020352594}
 --- !u!1 &995520699
 GameObject:
   m_ObjectHideFlags: 0
@@ -3622,6 +3639,7 @@ GameObject:
   - component: {fileID: 1669583616}
   - component: {fileID: 1669583618}
   - component: {fileID: 1669583617}
+  - component: {fileID: 1669583619}
   m_Layer: 5
   m_Name: LoginPanel
   m_TagString: Untagged
@@ -3694,6 +3712,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1669583615}
   m_CullTransparentMesh: 1
+--- !u!114 &1669583619
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1669583615}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29e8c69726a4faa408c5c7853278440e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputFields:
+  - {fileID: 151614396}
+  - {fileID: 1990508282}
 --- !u!1 &1717808259
 GameObject:
   m_ObjectHideFlags: 0
