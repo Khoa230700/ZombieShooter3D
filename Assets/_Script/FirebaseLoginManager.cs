@@ -134,7 +134,7 @@ public class FirebaseLoginManager : MonoBehaviour
             {
                 FirebaseUser user = task.Result.User;
                 EnsureUserDataExists(user);
-                StartCoroutine(DelayedSceneLoad(2));
+                StartCoroutine(DelayedSceneLoad(1));
             }
         });
     }

@@ -46,12 +46,12 @@ public class InfoController : MonoBehaviour
 
     void BacktoSignin()
     {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(0);
     }
 
     void ToRankingList()
     {
-        SceneManager.LoadScene(3);
+        SceneManager.LoadScene(2);
     }
 
     private void LoadPlayerData(string userId)
