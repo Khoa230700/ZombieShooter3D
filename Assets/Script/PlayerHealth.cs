@@ -24,47 +24,32 @@ public class PlayerHealth : MonoBehaviour
 
         AmorSlider.value = currentArmor;
     }
-
-    // Update is called once per frame
-    //public void TakeDamage(int damage)
-    //{
-    //    currentHealth -= damage;
-    //    healthSlider.value = currentHealth;
-    //    if (currentHealth <= 0)
-    //    {
-    //        Debug.Log("Die");
-    //    }
-    //}
     public void TakeDamage(int damage)
     {
+        int armorDamage = Mathf.FloorToInt(damage * 0.7f);
+        int healthDamage = Mathf.FloorToInt(damage * 0.3f);
+
         if (currentArmor > 0)
         {
-            // Trừ damage vào giáp
-            currentArmor -= damage;
-
-            // Tính damage giảm cho máu (khi còn giáp, máu chỉ nhận damage theo hệ số 0.3)
-            int reducedDamage = Mathf.FloorToInt(damage * 0.3f);
-            currentHealth -= reducedDamage;
-
-            // Nếu giáp bị âm (tức damage vượt quá lượng giáp hiện có)
-            if (currentArmor < 0)
+            if (currentArmor >= armorDamage)
             {
-                // Phần vượt quá giáp được tính full cho máu
-                int extraDamage = -currentArmor; // tương đương với damage - giáp ban đầu
-                currentHealth -= extraDamage;
-                currentArmor = 0; // đảm bảo giáp không âm
+                currentArmor -= armorDamage;
+            }
+            else
+            {
+                int remainingDamage = armorDamage - currentArmor;
+                currentArmor = 0;
+                currentHealth -= remainingDamage;
             }
         }
         else
         {
-            // Khi không có giáp, máu nhận damage đầy đủ
             currentHealth -= damage;
         }
+        currentHealth -= healthDamage;
+        if (currentArmor < 0) currentArmor = 0;
+        if (currentHealth < 0) currentHealth = 0;
 
-        // Giữ cho máu không âm
-        if (currentHealth <= 0)
-            currentHealth = 0;
-
-        Debug.Log("Current Armor: " + currentArmor + " - Current Health: " + currentHealth);
+        Debug.Log($"Armor: {currentArmor} - Health: {currentHealth}");
     }
 }

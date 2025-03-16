@@ -9,21 +9,28 @@ using static UnityEngine.GraphicsBuffer;
 
 public class Zombie : MonoBehaviour
 {
+    [Header("Chỉ số của zombies")]
+    public int Damage = 40;
+    public int Health;
+    public float Speed;
+    public float attackCooldown = 3f;  // Thời gian chờ giữa các đợt tấn công
+
+    [Header("Các chỉ số khác của zombies")]
     [SerializeField] private CharacterController characterController;
     [SerializeField] private Transform BOT;
     [SerializeField] private Animator animator;
     [SerializeField] private GameObject Player;
     [SerializeField] private NavMeshAgent agent;
-    [SerializeField] public int Damege = 40;
     [SerializeField] private CapsuleCollider capsuleCollider;
     [SerializeField] private PlayerHealth playerHealth;
     [SerializeField] private AudioClip adidoclip;
     [SerializeField] private AudioSource adidocsource;
-
-    public float attackCooldown = 3f;  // Thời gian chờ giữa các đợt tấn công
+    
     private float nextAttackTime = 0f; // Thời điểm cho phép tấn công tiếp theo
     private int _speedHash;
     private int _attackHash;
+    public Heath ZombieHealth;
+
     private void Awake()
     {
             if (Player == null)
@@ -32,19 +39,22 @@ public class Zombie : MonoBehaviour
             }
             if (playerHealth == null)
             {
-            playerHealth = FindObjectOfType<PlayerHealth>();
-        }
+            playerHealth = FindFirstObjectByType<PlayerHealth>(); 
+            }
 
     }
     private void Start()
     {
+        ZombieHealth.Health = Health;
         _speedHash = Animator.StringToHash("Run");
         //_attackHash = Animator.StringToHash("Attack");
+        agent.speed = Speed;
 
     }
     private void Update()
     {
-        
+        ZombieHealth.Health = Health;
+        agent.speed = Speed;
         agent.SetDestination(Player.transform.position);
         // tính khoảng cách giữa quái và vị trí ban đầu nhân vật
         var distance = Vector3.Distance(BOT.position, Player.transform.position);
@@ -82,7 +92,7 @@ public class Zombie : MonoBehaviour
             Debug.Log("hit");
             if (playerHealth != null)
             {
-                playerHealth.TakeDamage(Damege);
+                playerHealth.TakeDamage(Damage);
             }
         }
     }

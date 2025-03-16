@@ -9,7 +9,7 @@ public class Heath : MonoBehaviour
     private bool isDead = false;
     void Start()
     {
-        spawn = FindObjectOfType<Spawn>();
+        spawn = FindFirstObjectByType<Spawn>();
         
         currentHealth = Health;
     }
