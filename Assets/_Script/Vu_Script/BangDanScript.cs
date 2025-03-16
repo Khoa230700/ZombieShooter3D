@@ -88,11 +88,11 @@ public class BangDanScript : MonoBehaviour
     }
 
     // Hàm nhặt băng đạn
-    public void PickupMagazine()
+    public void NhatBangDan()
     {
-        _soBangDan++; // Tăng số băng đạn còn lại
+        _danChuaNap += _luudanDaNap;
         UpdateAmmoDisplay();
-        Debug.Log("Nhặt được băng đạn! Băng đạn còn lại: " + _soBangDan);
+        Debug.Log("Nhặt được băng đạn!  ");
     }
     public void OnReloadComplete()
     {
