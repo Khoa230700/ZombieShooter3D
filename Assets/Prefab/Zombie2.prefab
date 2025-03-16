@@ -2062,7 +2062,7 @@ MonoBehaviour:
   animator: {fileID: 4435595498275925116}
   Player: {fileID: 0}
   agent: {fileID: 7904038700593326002}
-  Damege: 40
+  Damege: 20
   capsuleCollider: {fileID: 1531558550990570427}
   playerHealth: {fileID: 0}
   adidoclip: {fileID: 8300000, guid: f4077f8a9dec9f94b9dfaf0c73a7f121, type: 3}
