@@ -3,14 +3,16 @@ using UnityEngine.UI;
 [System.Serializable]
 public class PlayerHealth : MonoBehaviour
 {
-    public int Health;
-    private int currentHealth;
+    private int Health;
+    public int currentHealth;
     public Slider healthSlider;
-    public int Amor;
-    private int currentArmor;
+    private int Amor;
+    public int currentArmor;
     public Slider AmorSlider;
     void Start()
     {
+        Health = 100;
+        Amor = 100;
         currentHealth = Health;
         healthSlider.value = currentHealth;
         currentArmor = Amor;
