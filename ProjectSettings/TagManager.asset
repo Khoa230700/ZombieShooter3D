@@ -8,6 +8,10 @@ TagManager:
   - ZombiePre
   - SFX
   - ThemeSound
+  - ZombieBody
+  - ZombieHead
+  - CinemachineTarget
+  - BangDan
   layers:
   - Default
   - TransparentFX
