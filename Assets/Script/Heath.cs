@@ -9,7 +9,7 @@ public class Heath : MonoBehaviour
     private bool isDead = false;
     void Start()
     {
-        spawn = FindObjectOfType<Spawn>();
+        spawn = FindFirstObjectByType<Spawn>();
         
         currentHealth = Health;
     }
@@ -27,7 +27,6 @@ public class Heath : MonoBehaviour
         isDead = true;
         if (spawn != null)
         {
-            spawn.zombiesRemaining--;
             spawn.ZombieKilled();
         }
         animator.SetTrigger("DieFB");

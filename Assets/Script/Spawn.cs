@@ -4,90 +4,202 @@ using TMPro;
 
 public class Spawn : MonoBehaviour
 {
-    [SerializeField] private GameObject enemyPrefab;    // Prefab của zombie
-    [SerializeField] private Transform[] spawnPoints;  // Mảng điểm spawn
-    [SerializeField] private int waveNumber = 1;       // Số wave hiện tại
-    [SerializeField] private int   zombiesPerWave = 5; // Số zombie mỗi wave cơ bản
-    [SerializeField] private float spawnDelay = 2f;    // Thời gian delay giữa các lần spawn
-    [SerializeField] private float waveDelay = 5f;     // Thời gian delay giữa các wave
-    [SerializeField] private int maxWave = 3;
-    public int zombiesRemaining;
+    [Header("Danh sách prefab zombie & danh sách điểm spawn zombies")]
+    [SerializeField] private GameObject[] enemyPrefabs;
+    [SerializeField] private Transform[] spawnPoints;
+
+    [Header("Thời gian")]
+    [SerializeField] private float spawnInterval = 3f;
+    [SerializeField] private float waveInterval = 40f;
+    public bool isWaveTime = false;
+    public bool isWaveActive = false;
+
+    [Header("Hệ thống điều chỉnh wave")]
+    private int waveNumber = 0;
+    private float healthMultiplier = 1f;
+    private float speedMultiplier = 1f;
+    private float damageMultiplier = 1f;
+    private int zombiesRemaining = 0;
+
+    [Header("UI")]
     [SerializeField] private TextMeshProUGUI textMeshProWave;
-    [SerializeField] private TextMeshProUGUI textMeshProZom;
-    [SerializeField] private TextMeshProUGUI textMeshCooldown; // Tham chiếu đến UI Text để hiển thị thời gian
-    [SerializeField] private GameObject panelcooldownl;
+    [SerializeField] private TextMeshProUGUI textMeshProCountdown;
+
+    [Header("Audio")]
+    [SerializeField] private AudioSource warningSound;
+
+    private Coroutine blinkCoroutine;
 
     private void Start()
     {
-       
-        // Khởi chạy coroutine để spawn quái
-        StartCoroutine(StartNextWave());
+        StartCoroutine(SpawnZombiesRoutine());
+        StartCoroutine(WaveManager());
     }
-    private void Update()
-    {
-        textMeshProWave.text = waveNumber.ToString();
-        textMeshProZom.text = zombiesRemaining.ToString();
-   
 
-    }
-    
-    IEnumerator StartNextWave()
+    private IEnumerator SpawnZombiesRoutine()
     {
-        float currentDelay = waveDelay;
-        // Vòng lặp giảm thời gian từ waveDelay về 0
-        while (currentDelay > 0)
+        while (true)
         {
-            panelcooldownl.SetActive(true);
-            textMeshCooldown.text = currentDelay.ToString("F0");
-            currentDelay -= Time.deltaTime; // Giảm dần theo thời gian thực
-            yield return null; // Chờ đến frame tiếp theo
-        }
-        panelcooldownl.SetActive(false);
-        textMeshCooldown.text = "0"; // Đảm bảo hiển thị 0 khi hết thời gian
-        // Sau khi đếm ngược xong, kiểm tra và bắt đầu wave tiếp theo
-        if (waveNumber <= maxWave)
-        {
-            StartCoroutine(SpawnWave());
-        }
-        else
-        {
-            Debug.Log("Tất cả các wave đã được hoàn thành!");
-        }
-    }
-    public void ZombieKilled()
-    {
-        if (zombiesRemaining <= 0 )
-        {
-            waveNumber++;
-            StartCoroutine(StartNextWave());
-        }
-    }
-    IEnumerator SpawnWave()
-    {
-        // Tính tổng số zombie cần spawn cho wave hiện tại.
-        zombiesRemaining = waveNumber * zombiesPerWave;
-        // Tính số vòng lặp đầy đủ (mỗi vòng spawn enemy tại tất cả các spawn point)
-        int rounds = zombiesRemaining / spawnPoints.Length;
-        // Tính số enemy còn lại nếu tổng không chia hết cho số spawn point
-        int remainder = zombiesRemaining % spawnPoints.Length;
-
-        // Vòng lặp thứ nhất: spawn theo từng vòng đầy đủ qua tất cả các spawn point.
-        for (int i = 0; i < rounds; i++)
-        {
-            for (int j = 0; j < spawnPoints.Length; j++)
+            foreach (Transform spawnPoint in spawnPoints)
             {
-                Instantiate(enemyPrefab, spawnPoints[j].position, spawnPoints[j].rotation);
-                yield return new WaitForSeconds(spawnDelay);
+                SpawnRandomZombie(spawnPoint);
+            }
+            yield return new WaitForSeconds(spawnInterval);
+        }
+    }
+
+    private IEnumerator WaveManager()
+    {
+        while (true)
+        {
+            yield return StartCoroutine(StartWaveCountdown());
+            StartCoroutine(HandleWave());
+        }
+    }
+
+    private IEnumerator StartWaveCountdown()
+    {
+        float remainingTime = waveInterval;
+        textMeshProCountdown.color = Color.white;
+        textMeshProCountdown.text = $"{remainingTime:F0}s";
+
+        while (remainingTime > 0)
+        {
+            textMeshProCountdown.text = $"{remainingTime:F0}s";
+
+            if (remainingTime <= 5)
+            {
+                textMeshProCountdown.color = Color.red;
+
+                if (remainingTime == 5)
+                {
+                    if (warningSound != null && !warningSound.isPlaying)
+                    {
+                        warningSound.Play();
+                    }
+                }
+            }
+
+            if (remainingTime <= 3)
+            {
+                if (blinkCoroutine == null)
+                {
+                    blinkCoroutine = StartCoroutine(BlinkCountdownText(0.5f));
+                }
+            }
+
+            if (remainingTime == 1)
+            {
+                if (blinkCoroutine != null)
+                {
+                    StopCoroutine(blinkCoroutine);
+                }
+                blinkCoroutine = StartCoroutine(BlinkCountdownText(0.2f));
+            }
+
+            yield return new WaitForSeconds(1f);
+            remainingTime--;
+        }
+
+        textMeshProCountdown.text = "";
+        if (blinkCoroutine != null)
+        {
+            StopCoroutine(blinkCoroutine);
+            blinkCoroutine = null;
+        }
+    }
+
+    private IEnumerator BlinkCountdownText(float interval)
+    {
+        while (true)
+        {
+            textMeshProCountdown.enabled = !textMeshProCountdown.enabled;
+            yield return new WaitForSeconds(interval);
+        }
+    }
+
+    private IEnumerator HandleWave()
+    {
+        if (warningSound != null)
+        {
+            warningSound.Stop();
+        }
+
+        isWaveActive = true;
+        waveNumber++;
+        textMeshProWave.text = $"{waveNumber}";
+        ApplyWaveBuff();
+
+        foreach (Transform spawnPoint in spawnPoints)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                SpawnRandomZombie(spawnPoint);
+                yield return new WaitForSeconds(0.5f);
             }
         }
 
-        // Vòng lặp thứ hai: spawn các enemy còn lại (nếu có).
-        for (int j = 0; j < remainder; j++)
+        yield return new WaitForSeconds(2f);
+        isWaveActive = false;
+        isWaveTime = false;
+    }
+
+    private void ApplyWaveBuff()
+    {
+        switch (waveNumber % 3)
         {
-            Instantiate(enemyPrefab, spawnPoints[j].position, spawnPoints[j].rotation);
-            yield return new WaitForSeconds(spawnDelay);
+            case 1:
+                healthMultiplier *= 1.1f;
+                break;
+            case 2:
+                speedMultiplier *= 1.02f;
+                break;
+            case 0:
+                damageMultiplier *= 1.08f;
+                break;
+        }
+
+        Debug.Log($"[Wave {waveNumber}] - Health x{healthMultiplier}, Speed x{speedMultiplier}, Damage x{damageMultiplier}");
+    }
+
+    private void SpawnRandomZombie(Transform spawnPoint)
+    {
+        if (enemyPrefabs.Length < 2)
+        {
+            Debug.LogError("⚠️ Thiếu prefab zombie! Cần ít nhất 2 prefab.");
+            return;
+        }
+
+        float rand = Random.value;
+        GameObject selectedPrefab = (rand <= 0.7f) ? enemyPrefabs[0] : enemyPrefabs[1];
+
+        GameObject zombieInstance = Instantiate(selectedPrefab, spawnPoint.position, spawnPoint.rotation);
+        Zombie zombieScript = zombieInstance.GetComponent<Zombie>();
+
+        if (zombieScript != null)
+        {
+            int baseHealth = 8;
+            float baseSpeed = 3f;
+            int baseDamage = 2;
+
+            int newHealth = Mathf.RoundToInt(baseHealth * healthMultiplier);
+            float newSpeed = baseSpeed * speedMultiplier;
+            int newDamage = Mathf.RoundToInt(baseDamage * damageMultiplier);
+
+            zombieScript.Initialize(newDamage, newHealth, newSpeed);
+            Debug.Log($"🧟 Zombie Spawned: Health={newHealth}, Speed={newSpeed}, Damage={newDamage}");
         }
     }
-   
-}
 
+    public void ZombieKilled()
+    {
+        //zombiesRemaining--;
+        Debug.Log($"Zombie killed! Remaining: {zombiesRemaining}");
+
+        //if (zombiesRemaining <= 0)
+        //{
+        //    Debug.Log("Wave Completed!");
+        //    isWaveTime = true;
+        //}
+    }
+}

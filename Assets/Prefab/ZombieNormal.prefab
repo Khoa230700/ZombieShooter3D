@@ -485,7 +485,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0.000000015619483, y: -0.00000005454135, z: -0.11446538, w: 0.9934272}
   m_LocalPosition: {x: -0.043604355, y: -0.0033361912, z: -0.000000008279867}
-  m_LocalScale: {x: 1.0000005, y: 1.0000005, z: 1}
+  m_LocalScale: {x: 1.2, y: 1.2, z: 1.2}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1512152335538087959}
@@ -643,7 +643,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0.007797423, y: 0.9974131, z: -0.0073700184, w: 0.07107759}
   m_LocalPosition: {x: -0.016426772, y: 0.04478738, z: 0.08392096}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.8, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3518874329087434581}
@@ -1779,7 +1779,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0.007863269, y: 0.99740684, z: 0.0073750988, w: -0.07115773}
   m_LocalPosition: {x: -0.016426772, y: 0.04478739, z: -0.08392096}
-  m_LocalScale: {x: 0.99999994, y: 1, z: 1}
+  m_LocalScale: {x: 0.8, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 976471820745099229}
@@ -1929,7 +1929,7 @@ GameObject:
   - component: {fileID: 443282696946178420}
   - component: {fileID: 485434577339339070}
   m_Layer: 0
-  m_Name: Zombie2
+  m_Name: ZombieNormal
   m_TagString: Zombie
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1944,8 +1944,8 @@ Transform:
   m_GameObject: {fileID: 8644453295562560045}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.36, y: 0, z: 4.936}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 1.36, y: -0.147, z: 4.936}
+  m_LocalScale: {x: 1, y: 0.81923, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6534560875782746926}
@@ -2057,9 +2057,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fc1061a528fa0e42827f0b00f31fe03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Damage: 10
-  Health: 10
-  Speed: 3.5
+  Damage: 12
+  Health: 8
+  Speed: 7
+  attackCooldown: 1.5
   characterController: {fileID: 1344581294984869673}
   BOT: {fileID: 2894715450092370036}
   animator: {fileID: 4435595498275925116}
@@ -2069,7 +2070,6 @@ MonoBehaviour:
   playerHealth: {fileID: 0}
   adidoclip: {fileID: 8300000, guid: f4077f8a9dec9f94b9dfaf0c73a7f121, type: 3}
   adidocsource: {fileID: 485434577339339070}
-  attackCooldown: 3
   ZombieHealth: {fileID: 4737192567132197445}
 --- !u!114 &4737192567132197445
 MonoBehaviour:

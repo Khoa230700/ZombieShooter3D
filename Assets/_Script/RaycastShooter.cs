@@ -4,6 +4,7 @@ using Unity.Mathematics;
 using StarterAssets;
 using System.Security.Cryptography.X509Certificates;
 using TMPro;
+using System;
 
 public class RaycastShooter : MonoBehaviour
 {
@@ -37,6 +38,7 @@ public class RaycastShooter : MonoBehaviour
     public TotalScore_Script totalScore_Script;
 
     public BangDanScript bangDanScript;
+    public event Action<string, string, string> OnObjectShot;
     void Start()
     {
        
@@ -176,7 +178,7 @@ public class RaycastShooter : MonoBehaviour
 
         adusource.PlayOneShot(aduclip);
         animator.Play("Shoot", 0, 0);
-        
+
         Vector3 direction = (savedHitPosition - firePoint.position).normalized;
         RaycastHit[] hits = Physics.RaycastAll(firePoint.position, direction, raycastDistance);
 
@@ -216,19 +218,16 @@ public class RaycastShooter : MonoBehaviour
                 if (parent.CompareTag("ZombieHead"))
                 {
                     isHeadshot = true;
-                    //totalScore_Script.ScoreHeadSort(20);
                     targetHealth = parent.GetComponent<Heath>();
                 }
                 else if (parent.CompareTag("Zombie"))
                 {
                     isBodyshot = true;
-                    //totalScore_Script.ScoreBody(10);
                     if (targetHealth == null)
                         targetHealth = parent.GetComponent<Heath>();
                 }
             }
         }
-
 
         if (closestHit.HasValue && targetHealth != null)
         {
@@ -236,21 +235,26 @@ public class RaycastShooter : MonoBehaviour
             Instantiate(bullethit, hit.point, quaternion.identity);
 
             int damageToApply = damageout;
+            string hitType = "";
             if (isHeadshot)
             {
-                damageToApply *= 2;
-               // _scoreHead += 20;
-               totalScore_Script.ScoreHeadSort(20);
-                Debug.Log("🔥 Headshot! Damage: " + damageToApply);
+                damageToApply = 10000;
+                totalScore_Script.ScoreHeadSort(1);
+                hitType = "Headshot";
+                Debug.Log(hitType + " Damage: " + damageToApply);
             }
             else if (isBodyshot)
             {
-                //_scoreBody += 10;
-               totalScore_Script.ScoreBody(10);
-                Debug.Log("💥 Bodyshot! Damage: " + damageToApply);
+                totalScore_Script.ScoreBody(1);
+                hitType = "Bodyshot";
+                Debug.Log(hitType + " Damage: " + damageToApply);
             }
 
             targetHealth.TakeDamage(damageToApply);
+
+            string hitObjectName = hit.collider.name;
+            string gunName = gameObject.name;
+            OnObjectShot?.Invoke(hitType, hitObjectName, gunName);
         }
     }
     public void OnReloadComplete()
