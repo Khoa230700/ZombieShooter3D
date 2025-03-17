@@ -10,6 +10,7 @@ public class MissController : MonoBehaviour
     private int currentMissionIndex;
     private int shotsRequired;
     private int shotsMade;
+    public TotalScore_Script Point;
 
     void Start()
     {
@@ -70,6 +71,7 @@ public class MissController : MonoBehaviour
 
             if (shotsMade >= shotsRequired)
             {
+                Point.MissionPoint += 1000;
                 Debug.Log("Mission Completed!");
                 ActivateRandomText();
             }

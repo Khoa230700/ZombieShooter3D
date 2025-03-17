@@ -123,7 +123,7 @@ public class RaycastShooter : MonoBehaviour
     public void HandleShooting()
     {
         //bangDan_SCRIPT.TruDan(1);
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !bangDanScript.EmptyBullet)
         {
        
             isShooting = true;
