@@ -15,10 +15,12 @@ public class GunController : MonoBehaviour
     private int frameCounter = 0;
     private bool isShooting = false;
     private bool wasQuickTap = false;
+    public BangDanScript Bullet;
 
     private void Update()
     {
-        ShootType();
+        if(!Bullet.EmptyBullet)
+        { ShootType(); }    
     }
 
     public void ShootType()

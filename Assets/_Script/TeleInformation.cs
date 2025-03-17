@@ -5,7 +5,7 @@ public class TeleInformation : MonoBehaviour
     public GunTypeController gunTypeController;
     public RaycastShooter[] raycastShooters;
     public MissController missController;
-
+    public HitEffectController hitEffectController;
     void Start()
     {
         foreach (var shooter in raycastShooters)
@@ -20,6 +20,10 @@ public class TeleInformation : MonoBehaviour
         if (missController != null)
         {
             missController.UpdateMissionProgress(hitType, hitObjectName, gunName);
+        }
+        if (hitEffectController != null)
+        {
+            hitEffectController.ShowHitEffect(hitType);
         }
     }
 }
