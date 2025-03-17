@@ -4,9 +4,9 @@ using UnityEngine.UI;
 public class TotalScore_Script : MonoBehaviour
 {
 
-    [SerializeField] private float _scoreBody ;
-    [SerializeField] private float _scoreHead ;
-    [SerializeField] private float _totalScore;
+    [SerializeField] public float _scoreBody ;
+    [SerializeField] public float _scoreHead ;
+    [SerializeField] public float _totalScore;
 
     void Start()
     {
@@ -18,7 +18,7 @@ public class TotalScore_Script : MonoBehaviour
     public float GetScoreBody() => _scoreBody;
     public float GetScoreHeadSort() => _scoreHead;
 
-    public float GetTotalScore() => _totalScore = _scoreBody + _scoreHead;
+    public float GetTotalScore() => _totalScore = (_scoreBody + _scoreHead*2)*10;
 
     public void ScoreHeadSort(float health)
     {

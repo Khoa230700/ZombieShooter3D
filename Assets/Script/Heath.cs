@@ -27,7 +27,6 @@ public class Heath : MonoBehaviour
         isDead = true;
         if (spawn != null)
         {
-            spawn.zombiesRemaining--;
             spawn.ZombieKilled();
         }
         animator.SetTrigger("DieFB");

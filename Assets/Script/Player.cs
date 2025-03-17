@@ -26,7 +26,7 @@ public class Player : MonoBehaviour
         {
             Destroy(other.gameObject);
             Debug.Log("trung");
-            spawn.zombiesRemaining--;
+            //spawn.zombiesRemaining--;
             spawn.ZombieKilled();
             //health.TakeDamge(90);
         }
