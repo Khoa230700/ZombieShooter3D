@@ -12,10 +12,18 @@ public class SpawnBullet : MonoBehaviour
     [Header("Thời gian spawn (giây)")]
     public float spawnInterval = 60f;
 
+    public GameObject SettingPanel;
+
+
+    private void Awake()
+    {
+        SettingPanel.SetActive(true);
+    }
     void Start()
     {
         StartCoroutine(SpawnRoutine());
     }
+    
 
     IEnumerator SpawnRoutine()
     {
