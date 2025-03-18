@@ -97,6 +97,18 @@ public class BangDanScript : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Piston"))
+        {
+            NhatBangDan();
+        }
+        if (other.CompareTag("Machinegun"))
+        {
+            NhatBangDan();
+        }
+    }
+
     private void UpdateAmmoDisplay()
     {
         _soDanText.text = $"{_danDaNap} / {_danChuaNap}";

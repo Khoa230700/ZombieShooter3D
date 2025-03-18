@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,6 +11,9 @@ public class GunTypeController : MonoBehaviour
     public RawImage[] CrossHairs;
 
     private int currentWeaponIndex = 0;
+    public Collectbullet collect;
+    public BangDanScript piston;
+    public BangDanScript machinegun;
 
     void Start()
     {
@@ -22,10 +26,12 @@ public class GunTypeController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             UpdateWeapon(0);
+            Reloadbullet(0);
         }
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             UpdateWeapon(1);
+            Reloadbullet(1);
         }
     }
 
@@ -40,5 +46,19 @@ public class GunTypeController : MonoBehaviour
             if (CrossHairs[i] != null) CrossHairs[i].gameObject.SetActive(isActive);
         }
         currentWeaponIndex = weaponIndex;
+    }
+
+    public void Reloadbullet(int weaponIndex)
+    {
+        if (weaponIndex == 0)
+        {
+            piston._danChuaNap += collect.Pistondanchuanap;
+            collect.Pistondanchuanap = 0;
+        }
+        else if (weaponIndex == 1)
+        {
+            machinegun._danChuaNap += collect.Machinegundanchuanap;
+            collect.Machinegundanchuanap = 0;
+        }
     }
 }

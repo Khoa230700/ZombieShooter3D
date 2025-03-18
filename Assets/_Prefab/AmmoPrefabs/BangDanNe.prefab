@@ -14,7 +14,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 45fb3b613218da844b047d1f9349e0d6, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -9.105893
+      value: -7.4
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 45fb3b613218da844b047d1f9349e0d6, type: 3}
       propertyPath: m_LocalPosition.y
@@ -58,7 +58,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -927199367670048503, guid: 45fb3b613218da844b047d1f9349e0d6, type: 3}
       propertyPath: m_TagString
-      value: BangDan
+      value: Machinegun
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -72,7 +72,7 @@ PrefabInstance:
       addedObject: {fileID: 3981681146334485583}
     - targetCorrespondingSourceObject: {fileID: -927199367670048503, guid: 45fb3b613218da844b047d1f9349e0d6, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1124816812674787067}
+      addedObject: {fileID: 4666130420318022682}
   m_SourcePrefab: {fileID: 100100000, guid: 45fb3b613218da844b047d1f9349e0d6, type: 3}
 --- !u!1 &7408188849343094290 stripped
 GameObject:
@@ -123,11 +123,11 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 0
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &1124816812674787067
+--- !u!114 &4666130420318022682
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -139,4 +139,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0ba84308d040ae4eb0d05d763b58981, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bangDanScript: {fileID: 0}
