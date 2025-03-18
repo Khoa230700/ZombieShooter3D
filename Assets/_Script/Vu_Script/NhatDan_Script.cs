@@ -2,22 +2,20 @@
 
 public class NhatDan_Script : MonoBehaviour
 {
-    public BangDanScript bangDanScript;
-    //void OnCollisionEnter(Collision collision)
-    //{
-    //    if (collision.gameObject.tag == "BangDan")
-    //    {
-    //        Debug.Log("Có băng đạn");
-    //        bangDanScript.NhatBangDan();
-    //        Destroy(collision.gameObject);
-    //    }
-    //}
+    private Collectbullet Collectbullet;
+
+    private void Start()
+    {
+        Collectbullet = FindAnyObjectByType< Collectbullet>();
+    }
+
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Player")
+        if (other.CompareTag("Player"))
         {
             Debug.Log("Có băng đạn");
-            bangDanScript.NhatBangDan();
+            Collectbullet.Machinegundanchuanap += 30;
+            Collectbullet.Pistondanchuanap += 30;
             Destroy(gameObject);
         }
     }

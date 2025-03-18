@@ -16,21 +16,32 @@ public class GunController : MonoBehaviour
     private bool isShooting = false;
     private bool wasQuickTap = false;
     public BangDanScript Bullet;
+    public AudioSource EmptyBulletSound;
+    public AudioSource Gunsound;
 
     private void Update()
     {
         if(!Bullet.EmptyBullet)
-        { ShootType(); }    
+        { ShootType(); }
+        else
+        {
+            if (Input.GetMouseButton(0))
+            {
+                EmptyBulletSound.Play();
+            }
+        }
     }
 
     public void ShootType()
     {
+
         if (ShootPoint == null) return;
 
         if (isAutoFire)
         {
             if (Input.GetMouseButtonDown(0))
             {
+                Gunsound.Play();
                 isShooting = true;
                 wasQuickTap = true;
                 frameCounter = 0;
@@ -41,6 +52,7 @@ public class GunController : MonoBehaviour
                 frameCounter++;
                 if (frameCounter >= autoFireRateFrames)
                 {
+                    Gunsound.Play();
                     frameCounter = 0;
                     Fire();
                     wasQuickTap = false;
@@ -49,6 +61,7 @@ public class GunController : MonoBehaviour
 
             if (Input.GetMouseButtonUp(0))
             {
+                Gunsound.Play();
                 isShooting = false;
                 if (wasQuickTap)
                 {
@@ -61,6 +74,7 @@ public class GunController : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
+                Gunsound.PlayOneShot(Gunsound.clip);
                 Fire();
             }
         }
@@ -68,6 +82,7 @@ public class GunController : MonoBehaviour
 
     private void Fire()
     {
+
         SetTargetPosition(ShootPoint.savedHitPosition);
         //Debug.Log($"Firing at target position: {targetPosition}");
         FireBullet();

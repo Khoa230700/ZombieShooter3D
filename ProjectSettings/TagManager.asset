@@ -12,6 +12,8 @@ TagManager:
   - ZombieHead
   - CinemachineTarget
   - BangDan
+  - Piston
+  - Machinegun
   layers:
   - Default
   - TransparentFX

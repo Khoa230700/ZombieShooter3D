@@ -5,11 +5,9 @@ public class SpawnBullet : MonoBehaviour
 {
     [Header("Điểm Spawn")]
     public Transform spawnPointA;
-    public Transform spawnPointB;
 
     [Header("Prefab Bullet")]
     public GameObject prefabA;
-    public GameObject prefabB;
 
     [Header("Thời gian spawn (giây)")]
     public float spawnInterval = 60f;
@@ -24,7 +22,6 @@ public class SpawnBullet : MonoBehaviour
         while (true)
         {
             SpawnAtPoint(spawnPointA, prefabA);
-            SpawnAtPoint(spawnPointB, prefabB);
             yield return new WaitForSeconds(spawnInterval);
         }
     }

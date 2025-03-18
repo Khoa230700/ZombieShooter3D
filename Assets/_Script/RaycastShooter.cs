@@ -22,8 +22,6 @@ public class RaycastShooter : MonoBehaviour
 
     [Header("Weapon Settings")]
     public StarterAssetsInputs inputs;
-    public AudioClip aduclip;
-    public AudioSource adusource;
     public Animator animator;
     public ParticleSystem flash;
     public ParticleSystem bullethit;
@@ -175,8 +173,6 @@ public class RaycastShooter : MonoBehaviour
     void Fire()
     {
         if (firePoint == null || mainCamera == null) return;
-
-        adusource.PlayOneShot(aduclip);
         animator.Play("Shoot", 0, 0);
 
         Vector3 direction = (savedHitPosition - firePoint.position).normalized;
