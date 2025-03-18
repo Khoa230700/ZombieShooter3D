@@ -8,7 +8,7 @@ public class SettingPanelControl : MonoBehaviour
     private Vector2 offScreenPosition;
     public Button BttClose, BttSetting;
     private AudioSource BttCloseSound, BttSettingSound;
-    private bool isVisible = false;
+    public bool isVisible = false;
 
     [Header("Audio Sliders")]
     public Slider themeSlider;
@@ -80,4 +80,9 @@ public class SettingPanelControl : MonoBehaviour
         AudioManager.Instance.SetSFXVolume(volume);
         PlayerPrefs.SetFloat("SFXVolume", volume);
     }
+    public bool IsVisible()
+    {
+        return isVisible;
+    }
+
 }

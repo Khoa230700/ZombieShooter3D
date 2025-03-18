@@ -6,21 +6,22 @@ public class CursorManager : MonoBehaviour
     [Header("Danh sách các Object")]
     public List<GameObject> trackedObjects;
 
-    void Start()
+    void Awake()
     {
-        Invoke(nameof(HideCursor), 0.1f);
+        LockCursor();
     }
 
     void Update()
     {
         if (ShouldShowCursor())
         {
-            ShowCursor();
+            UnlockCursor();
         }
-        else
+        else if (Cursor.lockState != CursorLockMode.Locked)
         {
-            HideCursor();
+            LockCursor();
         }
+        Debug.Log($"Cursor.lockState: {Cursor.lockState}, Cursor.visible: {Cursor.visible}");
     }
 
     private bool ShouldShowCursor()
@@ -35,13 +36,13 @@ public class CursorManager : MonoBehaviour
         return false;
     }
 
-    private void HideCursor()
+    private void LockCursor()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
-    private void ShowCursor()
+    private void UnlockCursor()
     {
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
